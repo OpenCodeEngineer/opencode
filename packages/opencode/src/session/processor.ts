@@ -422,7 +422,7 @@ export namespace SessionProcessor {
                 error,
               })
             } else {
-              const retry = SessionRetry.retryable(error)
+              const retry = SessionRetry.retryable(error, input.abort)
               if (retry !== undefined) {
                 attempt++
                 attemptsOnCurrentModel++

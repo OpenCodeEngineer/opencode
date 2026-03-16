@@ -48,9 +48,13 @@ export namespace SessionRetry {
     return cap(Math.min(RETRY_INITIAL_DELAY * Math.pow(RETRY_BACKOFF_FACTOR, attempt - 1), RETRY_MAX_DELAY_NO_HEADERS))
   }
 
-  export function retryable(error: Err) {
+  export function retryable(error: Err, abort?: AbortSignal) {
     // context overflow errors should not be retried
     if (MessageV2.ContextOverflowError.isInstance(error)) return undefined
+    if (MessageV2.AbortedError.isInstance(error)) {
+      if (abort?.aborted) return undefined
+      return error.data.message
+    }
     if (MessageV2.APIError.isInstance(error)) {
       if (!error.data.isRetryable) return undefined
       if (error.data.responseBody?.includes("FreeUsageLimitError"))
