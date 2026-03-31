@@ -959,7 +959,7 @@ export namespace MessageV2 {
         ).toObject()
       case e instanceof Error && (e as FetchDecompressionError).code === "ZlibError":
         if (ctx.aborted) {
-          return new MessageV2.AbortedError({ message: e.message }, { cause: e }).toObject()
+          return new MessageV2.AbortedError({ message: (e as Error).message }, { cause: e }).toObject()
         }
         return new MessageV2.APIError(
           {
@@ -967,7 +967,23 @@ export namespace MessageV2 {
             isRetryable: true,
             metadata: {
               code: (e as FetchDecompressionError).code,
-              message: e.message,
+              message: (e as Error).message,
+            },
+          },
+          { cause: e },
+        ).toObject()
+      // Handle additional network errors that indicate transient connection issues
+      case ["ETIMEDOUT", "ENOTFOUND", "ECONNREFUSED", "EPIPE", "EHOSTUNREACH", "ENETUNREACH"].includes(
+        (e as SystemError)?.code ?? ""
+      ):
+        return new MessageV2.APIError(
+          {
+            message: `Network error: ${(e as SystemError).code}`,
+            isRetryable: true,
+            metadata: {
+              code: (e as SystemError).code ?? "",
+              syscall: (e as SystemError).syscall ?? "",
+              message: (e as SystemError).message ?? "",
             },
           },
           { cause: e },
