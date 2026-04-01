@@ -10,7 +10,7 @@ process.env.OPENCODE_DISABLE_DEFAULT_PLUGINS = "1"
 
 const { Plugin } = await import("../../src/plugin/index")
 const { Instance } = await import("../../src/project/instance")
-const { BunProc } = await import("../../src/bun")
+const { Npm } = await import("../../src/npm")
 const { Bus } = await import("../../src/bus")
 const { Session } = await import("../../src/session")
 
@@ -258,16 +258,16 @@ describe("plugin.loader.shared", () => {
       },
     })
 
-    const install = spyOn(BunProc, "install").mockImplementation(async (pkg) => {
-      if (pkg === "acme-plugin") return tmp.extra.acme
-      return tmp.extra.scope
+    const install = spyOn(Npm, "add").mockImplementation(async (pkg) => {
+      if (pkg === "acme-plugin") return { directory: tmp.extra.acme, entrypoint: tmp.extra.acme }
+      return { directory: tmp.extra.scope, entrypoint: tmp.extra.scope }
     })
 
     try {
       await load(tmp.path)
 
-      expect(install.mock.calls).toContainEqual(["acme-plugin", "latest", { ignoreScripts: true }])
-      expect(install.mock.calls).toContainEqual(["scope-plugin", "2.3.4", { ignoreScripts: true }])
+      expect(install.mock.calls).toContainEqual(["acme-plugin@latest"])
+      expect(install.mock.calls).toContainEqual(["scope-plugin@2.3.4"])
     } finally {
       install.mockRestore()
     }
@@ -321,7 +321,7 @@ describe("plugin.loader.shared", () => {
       },
     })
 
-    const install = spyOn(BunProc, "install").mockResolvedValue(tmp.extra.mod)
+    const install = spyOn(Npm, "add").mockResolvedValue({ directory: tmp.extra.mod, entrypoint: tmp.extra.mod })
 
     try {
       await load(tmp.path)
@@ -378,7 +378,7 @@ describe("plugin.loader.shared", () => {
       },
     })
 
-    const install = spyOn(BunProc, "install").mockResolvedValue(tmp.extra.mod)
+    const install = spyOn(Npm, "add").mockResolvedValue({ directory: tmp.extra.mod, entrypoint: tmp.extra.mod })
 
     try {
       const errors = await errs(tmp.path)
@@ -431,7 +431,7 @@ describe("plugin.loader.shared", () => {
       },
     })
 
-    const install = spyOn(BunProc, "install").mockResolvedValue(tmp.extra.mod)
+    const install = spyOn(Npm, "add").mockResolvedValue({ directory: tmp.extra.mod, entrypoint: tmp.extra.mod })
 
     try {
       const errors = await errs(tmp.path)
@@ -477,7 +477,7 @@ describe("plugin.loader.shared", () => {
       },
     })
 
-    const install = spyOn(BunProc, "install").mockResolvedValue(tmp.extra.mod)
+    const install = spyOn(Npm, "add").mockResolvedValue({ directory: tmp.extra.mod, entrypoint: tmp.extra.mod })
 
     try {
       const errors = await errs(tmp.path)
@@ -541,7 +541,7 @@ describe("plugin.loader.shared", () => {
       },
     })
 
-    const install = spyOn(BunProc, "install").mockResolvedValue(tmp.extra.mod)
+    const install = spyOn(Npm, "add").mockResolvedValue({ directory: tmp.extra.mod, entrypoint: tmp.extra.mod })
 
     try {
       const errors = await errs(tmp.path)
@@ -572,7 +572,7 @@ describe("plugin.loader.shared", () => {
       },
     })
 
-    const install = spyOn(BunProc, "install").mockResolvedValue("")
+    const install = spyOn(Npm, "add").mockResolvedValue({ directory: "", entrypoint: "" })
 
     try {
       await load(tmp.path)
@@ -593,7 +593,7 @@ describe("plugin.loader.shared", () => {
       },
     })
 
-    const install = spyOn(BunProc, "install").mockRejectedValue(new Error("boom"))
+    const install = spyOn(Npm, "add").mockRejectedValue(new Error("boom"))
 
     try {
       const errors = await errs(tmp.path)

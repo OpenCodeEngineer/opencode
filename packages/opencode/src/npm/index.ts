@@ -1,14 +1,3 @@
-// Workaround: Bun on Windows does not support the UV_FS_O_FILEMAP flag that
-// the `tar` package uses for files < 512KB (fs.open returns EINVAL).
-// tar silently swallows the error and skips writing files, leaving only empty
-// directories. Setting __FAKE_PLATFORM__ makes tar fall back to the plain 'w'
-// flag. See tar's get-write-flag.js.
-// Must be set before @npmcli/arborist is imported since tar caches the flag
-// at module evaluation time — so we use a dynamic import() below.
-if (process.platform === "win32") {
-  process.env.__FAKE_PLATFORM__ = "linux"
-}
-
 import semver from "semver"
 import z from "zod"
 import { NamedError } from "@opencode-ai/util/error"
@@ -19,8 +8,7 @@ import path from "path"
 import { readdir, rm } from "fs/promises"
 import { Filesystem } from "@/util/filesystem"
 import { Flock } from "@/util/flock"
-
-const { Arborist } = await import("@npmcli/arborist")
+import { Arborist } from "@npmcli/arborist"
 
 export namespace Npm {
   const log = Log.create({ service: "npm" })
@@ -34,6 +22,15 @@ export namespace Npm {
 
   function directory(pkg: string) {
     return path.join(Global.Path.cache, "packages", pkg)
+  }
+
+  function resolveEntryPoint(name: string, dir: string) {
+    const entrypoint = typeof Bun !== "undefined" ? import.meta.resolve(name, dir) : import.meta.resolve(dir)
+    const result = {
+      directory: dir,
+      entrypoint,
+    }
+    return result
   }
 
   export async function outdated(pkg: string, cachedVersion: string): Promise<boolean> {
@@ -73,8 +70,7 @@ export namespace Npm {
     if (tree) {
       const first = tree.edgesOut.values().next().value?.to
       if (first) {
-        log.info("package already installed", { pkg })
-        return first.path
+        return resolveEntryPoint(first.name, first.path)
       }
     }
 
@@ -95,7 +91,7 @@ export namespace Npm {
 
     const first = result.edgesOut.values().next().value?.to
     if (!first) throw new InstallFailedError({ pkg })
-    return first.path
+    return resolveEntryPoint(first.name, first.path)
   }
 
   export async function install(dir: string) {

@@ -87,10 +87,12 @@ describe("Format", () => {
         const one = {
           extensions: Formatter.gofmt.extensions,
           enabled: Formatter.gofmt.enabled,
+          command: Formatter.gofmt.command,
         }
         const two = {
           extensions: Formatter.mix.extensions,
           enabled: Formatter.mix.enabled,
+          command: Formatter.mix.command,
         }
 
         let active = 0
@@ -100,19 +102,21 @@ describe("Format", () => {
           Effect.sync(() => {
             Formatter.gofmt.extensions = [".parallel"]
             Formatter.mix.extensions = [".parallel"]
+            Formatter.gofmt.command = ["sh", "-c", "true"]
+            Formatter.mix.command = ["sh", "-c", "true"]
             Formatter.gofmt.enabled = async () => {
               active++
               max = Math.max(max, active)
               await Bun.sleep(20)
               active--
-              return ["sh", "-c", "true"]
+              return true
             }
             Formatter.mix.enabled = async () => {
               active++
               max = Math.max(max, active)
               await Bun.sleep(20)
               active--
-              return ["sh", "-c", "true"]
+              return true
             }
           }),
           () =>
@@ -126,8 +130,10 @@ describe("Format", () => {
             Effect.sync(() => {
               Formatter.gofmt.extensions = one.extensions
               Formatter.gofmt.enabled = one.enabled
+              Formatter.gofmt.command = one.command
               Formatter.mix.extensions = two.extensions
               Formatter.mix.enabled = two.enabled
+              Formatter.mix.command = two.command
             }),
         )
 
