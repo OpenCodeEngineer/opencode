@@ -376,11 +376,7 @@ export function Session() {
           dialog.clear()
           return
         }
-        if (
-          !kv.get("share_consent", false) &&
-          "visibility" in sync.data.share &&
-          sync.data.share.visibility === "public"
-        ) {
+        if (!kv.get("share_consent", false) && !sync.data.share.disabled && sync.data.share.visibility === "public") {
           const ok = await DialogConfirm.show(
             dialog,
             "Share Session",
