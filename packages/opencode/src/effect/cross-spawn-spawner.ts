@@ -6,6 +6,7 @@ import * as Effect from "effect/Effect"
 import * as Exit from "effect/Exit"
 import * as FileSystem from "effect/FileSystem"
 import * as Layer from "effect/Layer"
+import * as ManagedRuntime from "effect/ManagedRuntime"
 import * as Path from "effect/Path"
 import * as PlatformError from "effect/PlatformError"
 import * as Predicate from "effect/Predicate"
@@ -492,10 +493,19 @@ export const defaultLayer = layer.pipe(Layer.provide(NodeFileSystem.layer), Laye
 import { lazy } from "@/util/lazy"
 
 const rt = lazy(() => {
-  // Dynamic import to avoid circular dep: cross-spawn-spawner → run-service → Instance → project → cross-spawn-spawner
-  const { makeRuntime } = require("@/effect/run-service") as typeof import("@/effect/run-service")
-  return makeRuntime(ChildProcessSpawner, defaultLayer)
+  const runtime = ManagedRuntime.make(defaultLayer)
+  return {
+    runPromiseExit: <A, E>(
+      fn: (spawner: ChildProcessSpawner["Service"]) => Effect.Effect<A, E, any>,
+      options?: Effect.RunOptions,
+    ) => runtime.runPromiseExit(ChildProcessSpawner.use(fn), options),
+    runPromise: <A, E>(
+      fn: (spawner: ChildProcessSpawner["Service"]) => Effect.Effect<A, E, any>,
+      options?: Effect.RunOptions,
+    ) => runtime.runPromise(ChildProcessSpawner.use(fn), options),
+  }
 })
 
-export const runPromiseExit: ReturnType<typeof rt>["runPromiseExit"] = (...args) => rt().runPromiseExit(...(args as [any]))
+export const runPromiseExit: ReturnType<typeof rt>["runPromiseExit"] = (...args) =>
+  rt().runPromiseExit(...(args as [any]))
 export const runPromise: ReturnType<typeof rt>["runPromise"] = (...args) => rt().runPromise(...(args as [any]))
