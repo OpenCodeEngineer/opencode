@@ -311,6 +311,68 @@ export async function openSettings(page: Page) {
   return dialog
 }
 
+export async function seedProjects(page: Page, input: { directory: string; extra?: string[]; serverUrl?: string }) {
+  await page.addInitScript(
+    (args: { directory: string; serverUrl: string; extra: string[] }) => {
+      const key = "opencode.global.dat:server"
+      const defaultKey = "opencode.settings.dat:defaultServerUrl"
+      const raw = localStorage.getItem(key)
+      const parsed = (() => {
+        if (!raw) return undefined
+        try {
+          return JSON.parse(raw) as unknown
+        } catch {
+          return undefined
+        }
+      })()
+
+      const store = parsed && typeof parsed === "object" ? (parsed as Record<string, unknown>) : {}
+      const list = Array.isArray(store.list) ? store.list : []
+      const lastProject = store.lastProject && typeof store.lastProject === "object" ? store.lastProject : {}
+      const projects = store.projects && typeof store.projects === "object" ? store.projects : {}
+      const nextProjects = { ...(projects as Record<string, unknown>) }
+      const nextList = list.includes(args.serverUrl) ? list : [args.serverUrl, ...list]
+
+      const add = (origin: string, directory: string) => {
+        const current = nextProjects[origin]
+        const items = Array.isArray(current) ? current : []
+        const existing = items.filter(
+          (p): p is { worktree: string; expanded?: boolean } =>
+            !!p &&
+            typeof p === "object" &&
+            "worktree" in p &&
+            typeof (p as { worktree?: unknown }).worktree === "string",
+        )
+
+        nextProjects[origin] = [{ worktree: directory, expanded: true }, ...existing.filter((p) => p.worktree !== directory)]
+      }
+
+      const directories = [args.directory, ...args.extra]
+      for (const directory of directories) {
+        add("local", directory)
+        add(args.serverUrl, directory)
+      }
+
+      const nextLastProject = {
+        ...(lastProject as Record<string, string>),
+        local: args.directory,
+        [args.serverUrl]: args.directory,
+      }
+
+      localStorage.setItem(
+        key,
+        JSON.stringify({
+          list: nextList,
+          projects: nextProjects,
+          lastProject: nextLastProject,
+        }),
+      )
+      localStorage.setItem(defaultKey, args.serverUrl)
+    },
+    { directory: input.directory, serverUrl: input.serverUrl ?? serverUrl, extra: input.extra ?? [] },
+  )
+}
+
 export async function createTestProject(input?: { serverUrl?: string }) {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), "opencode-e2e-project-"))
   const id = `e2e-${path.basename(root)}`
@@ -870,21 +932,18 @@ export async function openProjectMenu(page: Page, projectSlug: string) {
 }
 
 export async function setWorkspacesEnabled(page: Page, projectSlug: string, enabled: boolean) {
-  const current = () =>
-    page
-      .getByRole("button", { name: "New workspace" })
-      .first()
-      .isVisible()
-      .then((x) => x)
-      .catch(() => false)
-
-  if ((await current()) === enabled) return
-
-  if (enabled) {
-    await page.reload()
-    await openSidebar(page)
-    if ((await current()) === enabled) return
+  const state = async () => {
+    const menu = await openProjectMenu(page, projectSlug)
+    const toggle = menu.locator(projectWorkspacesToggleSelector(projectSlug)).first()
+    await expect(toggle).toBeVisible()
+    const text = ((await toggle.textContent()) ?? "").trim().toLowerCase()
+    await page.keyboard.press("Escape").catch(() => undefined)
+    if (text.includes("disable")) return true
+    if (text.includes("enable")) return false
+    throw new Error(`Unexpected workspaces toggle label for ${projectSlug}: ${text}`)
   }
+
+  if ((await state()) === enabled) return
 
   const flip = async (timeout?: number) => {
     const menu = await openProjectMenu(page, projectSlug)
@@ -913,14 +972,8 @@ export async function setWorkspacesEnabled(page: Page, projectSlug: string, enab
     if (matched) break
   }
 
-  if ((await current()) !== enabled) {
-    await page.reload()
-    await openSidebar(page)
-  }
-
-  const expected = enabled ? "New workspace" : "New session"
-  await expect.poll(current, { timeout: 60_000 }).toBe(enabled)
-  await expect(page.getByRole("button", { name: expected }).first()).toBeVisible({ timeout: 30_000 })
+  if (!flipped) await flip()
+  await expect.poll(() => state(), { timeout: 10_000 }).toBe(enabled)
 }
 
 export async function openWorkspaceMenu(page: Page, workspaceSlug: string) {

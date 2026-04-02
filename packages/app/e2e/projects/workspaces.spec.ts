@@ -17,12 +17,30 @@ import {
   setWorkspacesEnabled,
   slugFromUrl,
   waitDir,
+  waitSession,
   waitSlug,
 } from "../actions"
 import { inlineInputSelector, workspaceItemSelector } from "../selectors"
 import { dirSlug } from "../utils"
 
-async function setupWorkspaceTest(page: Page, project: { slug: string; trackDirectory: (directory: string) => void }) {
+async function waitWorkspaceItem(page: Page, slug: string) {
+  await expect
+    .poll(
+      async () => {
+        const item = page.locator(workspaceItemSelector(slug)).first()
+        try {
+          await item.hover({ timeout: 500 })
+          return true
+        } catch {
+          return false
+        }
+      },
+      { timeout: 60_000 },
+    )
+    .toBe(true)
+}
+
+async function setupWorkspaceTest(page: Page, project: { slug: string }) {
   const rootSlug = project.slug
   await openSidebar(page)
 
@@ -34,21 +52,7 @@ async function setupWorkspaceTest(page: Page, project: { slug: string; trackDire
   project.trackDirectory(next.directory)
 
   await openSidebar(page)
-
-  await expect
-    .poll(
-      async () => {
-        const item = page.locator(workspaceItemSelector(next.slug)).first()
-        try {
-          await item.hover({ timeout: 500 })
-          return true
-        } catch {
-          return false
-        }
-      },
-      { timeout: 60_000 },
-    )
-    .toBe(true)
+  await waitWorkspaceItem(page, next.slug)
 
   return { rootSlug, slug: next.slug, directory: next.directory }
 }
@@ -59,16 +63,36 @@ test("can enable and disable workspaces from project menu", async ({ page, proje
 
   await openSidebar(page)
 
-  await expect(page.getByRole("button", { name: "New session" }).first()).toBeVisible()
-  await expect(page.getByRole("button", { name: "New workspace" })).toHaveCount(0)
+    await expect(page.getByRole("button", { name: "New workspace" }).first()).toBeVisible()
+    await waitWorkspaceItem(page, slug)
 
-  await setWorkspacesEnabled(page, project.slug, true)
-  await expect(page.getByRole("button", { name: "New workspace" }).first()).toBeVisible()
-  await expect(page.locator(workspaceItemSelector(project.slug)).first()).toBeVisible()
+    await setWorkspacesEnabled(page, slug, false)
+    await expect(page.getByRole("button", { name: "New session" }).first()).toBeVisible()
+    await expect(page.locator(workspaceItemSelector(slug))).toHaveCount(0)
 
-  await setWorkspacesEnabled(page, project.slug, false)
-  await expect(page.getByRole("button", { name: "New session" }).first()).toBeVisible()
-  await expect(page.locator(workspaceItemSelector(project.slug))).toHaveCount(0)
+    await setWorkspacesEnabled(page, slug, true)
+    await expect(page.getByRole("button", { name: "New workspace" }).first()).toBeVisible()
+    await waitWorkspaceItem(page, slug)
+  })
+})
+
+test("existing git workspaces auto-show after reload", async ({ page, withProject }) => {
+  await page.setViewportSize({ width: 1400, height: 800 })
+
+  await withProject(async ({ directory, slug, trackDirectory }) => {
+    const created = await createSdk(directory).worktree.create().then((result) => result.data)
+    if (!created?.directory) throw new Error("Failed to create workspace")
+
+    trackDirectory(created.directory)
+
+    await page.reload()
+    await waitSession(page, { directory })
+    await openSidebar(page)
+
+    await expect(page.getByRole("button", { name: "New workspace" }).first()).toBeVisible()
+    await waitWorkspaceItem(page, slug)
+    await waitWorkspaceItem(page, dirSlug(created.directory))
+  })
 })
 
 test("can create a workspace", async ({ page, project }) => {
@@ -108,8 +132,17 @@ test("can create a workspace", async ({ page, project }) => {
 test("non-git projects keep workspace mode disabled", async ({ page, project }) => {
   await page.setViewportSize({ width: 1400, height: 800 })
 
-  const nonGit = await fs.mkdtemp(path.join(os.tmpdir(), "opencode-e2e-project-nongit-"))
-  const nonGitSlug = dirSlug(nonGit)
+  await withProject(async ({ slug }) => {
+    const name = path
+      .basename(base64Decode(slug))
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+/, "")
+      .replace(/-+$/, "")
+    const pattern = new RegExp(`${name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}-\\d{4}-\\d{2}-\\d{2}-\\d{2}-\\d{2}(?:-\\d+)?`)
+
+    await openSidebar(page)
+    await setWorkspacesEnabled(page, slug, true)
 
   await fs.writeFile(path.join(nonGit, "README.md"), "# e2e nongit\n")
 
@@ -249,6 +282,54 @@ test("can reorder workspaces by drag and drop", async ({ page, project }) => {
         { timeout: 60_000 },
       )
       .toBe(true)
+
+    await expect(page.locator(workspaceItemSelector(next.slug)).first()).toBeVisible()
+    await expect(page.locator(workspaceItemSelector(next.slug)).getByText(pattern).first()).toBeVisible()
+
+    await cleanupTestProject(next.directory)
+  })
+})
+
+test("non-git projects keep workspace mode disabled", async ({ page, withProject }) => {
+  await page.setViewportSize({ width: 1400, height: 800 })
+
+  const nonGit = await fs.mkdtemp(path.join(os.tmpdir(), "opencode-e2e-project-nongit-"))
+  const nonGitSlug = dirSlug(nonGit)
+
+  await fs.writeFile(path.join(nonGit, "README.md"), "# e2e nongit\n")
+
+  try {
+    await withProject(async () => {
+      await page.goto(`/${nonGitSlug}/session`)
+
+      await expect.poll(() => slugFromUrl(page.url()), { timeout: 30_000 }).not.toBe("")
+
+      const activeDir = await resolveSlug(slugFromUrl(page.url())).then((item) => item.directory)
+      expect(path.basename(activeDir)).toContain("opencode-e2e-project-nongit-")
+
+      await openSidebar(page)
+      await expect(page.getByRole("button", { name: "New workspace" })).toHaveCount(0)
+
+      const trigger = page.locator('[data-action="project-menu"]').first()
+      const hasMenu = await trigger
+        .isVisible()
+        .then((x) => x)
+        .catch(() => false)
+      if (!hasMenu) return
+
+      await trigger.click({ force: true })
+
+      const menu = page.locator(dropdownMenuContentSelector).first()
+      await expect(menu).toBeVisible()
+
+      const toggle = menu.locator('[data-action="project-workspaces-toggle"]').first()
+
+      await expect(toggle).toBeVisible()
+      await expect(toggle).toBeDisabled()
+      await expect(menu.getByRole("menuitem", { name: "New workspace" })).toHaveCount(0)
+    })
+  } finally {
+    await cleanupTestProject(nonGit)
   }
 
   const drag = async (from: string, to: string) => {
