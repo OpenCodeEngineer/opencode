@@ -207,14 +207,20 @@ export const { use: useGlobalSDK, provider: GlobalSDKProvider } = createSimpleCo
       clearHeartbeat()
     }
 
-    onMount(() => {
-      makeEventListener(document, "visibilitychange", () => {
-        if (document.visibilityState !== "visible") return
-        if (!started) return
-        if (Date.now() - lastEventAt < HEARTBEAT_TIMEOUT_MS) return
-        attempt?.abort()
-      })
-    })
+    const ensureStarted = () => {
+      void start()
+    }
+
+    const onVisibility = () => {
+      if (typeof document === "undefined") return
+      if (document.visibilityState !== "visible") return
+      if (!started) return
+      if (Date.now() - lastEventAt < HEARTBEAT_TIMEOUT_MS) return
+      attempt?.abort()
+    }
+    if (typeof document !== "undefined") {
+      document.addEventListener("visibilitychange", onVisibility)
+    }
 
     onCleanup(() => {
       stop()
@@ -232,8 +238,14 @@ export const { use: useGlobalSDK, provider: GlobalSDKProvider } = createSimpleCo
       url: currentServer.http.url,
       client: sdk,
       event: {
-        on: emitter.on.bind(emitter),
-        listen: emitter.listen.bind(emitter),
+        on(...args: Parameters<typeof emitter.on>) {
+          ensureStarted()
+          return emitter.on(...args)
+        },
+        listen(...args: Parameters<typeof emitter.listen>) {
+          ensureStarted()
+          return emitter.listen(...args)
+        },
         start,
       },
       createClient(opts: Omit<Parameters<typeof createSdkForServer>[0], "server" | "fetch">) {
