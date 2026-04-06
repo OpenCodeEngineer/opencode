@@ -31,8 +31,6 @@ import { SessionPrompt } from "@/session/prompt"
 import { Git } from "@/git"
 import { setTimeout as sleep } from "node:timers/promises"
 import { Process } from "@/util/process"
-import { git } from "@/util/git"
-import { parseGitHubRemote } from "@opencode-ai/util/github"
 
 type GitHubAuthor = {
   login: string

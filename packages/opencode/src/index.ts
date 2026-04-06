@@ -34,7 +34,9 @@ import path from "path"
 import { Global } from "./global"
 import { JsonMigration } from "./storage/json-migration"
 import { Database } from "./storage/db"
-import { Instance } from "./project/instance"
+import { errorMessage } from "./util/error"
+import { PluginCommand } from "./cli/cmd/plug"
+import { Heap } from "./cli/heap"
 
 process.on("unhandledRejection", (e) => {
   Log.Default.error("rejection", {

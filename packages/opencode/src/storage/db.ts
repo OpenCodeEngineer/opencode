@@ -163,7 +163,15 @@ export namespace Database {
     } catch (err) {
       if (err instanceof Context.NotFound) {
         const effects: (() => void | Promise<void>)[] = []
-        const txCallback = Instance.bind((tx: TxOrDb) => ctx.provide({ tx, effects }, () => callback(tx)))
+        const fn = (tx: TxOrDb) => ctx.provide({ tx, effects }, () => callback(tx))
+        const txCallback = iife(() => {
+          try {
+            return Instance.bind(fn)
+          } catch (err) {
+            if (err instanceof Context.NotFound) return fn
+            throw err
+          }
+        })
         const result = Client().transaction(txCallback, { behavior: options?.behavior })
         for (const effect of effects) effect()
         return result as NotPromise<T>

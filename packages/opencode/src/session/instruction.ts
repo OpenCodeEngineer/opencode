@@ -115,33 +115,6 @@ export namespace InstructionPrompt {
     return paths
   }
 
-  export async function system() {
-    const config = await Config.get()
-    const paths = await systemPaths()
-
-    const files = Array.from(paths).map(async (p) => {
-      const content = await Filesystem.readText(p).catch(() => "")
-      return content ? "Instructions from: " + p + "\n" + content : ""
-    })
-
-    const urls: string[] = []
-    if (config.instructions) {
-      for (const instruction of config.instructions) {
-        if (instruction.startsWith("https://") || instruction.startsWith("http://")) {
-          urls.push(instruction)
-        }
-      }
-    }
-    const fetches = urls.map((url) =>
-      fetch(url, { signal: AbortSignal.timeout(5000) })
-        .then((res) => (res.ok ? res.text() : ""))
-        .catch(() => "")
-        .then((x) => (x ? "Instructions from: " + url + "\n" + x : "")),
-    )
-
-    return Promise.all([...files, ...fetches]).then((result) => result.filter(Boolean))
-  }
-
   export function loaded(messages: MessageV2.WithParts[]) {
     const paths = new Set<string>()
     for (const msg of messages) {
@@ -159,36 +132,8 @@ export namespace InstructionPrompt {
     return paths
   }
 
-  export async function find(dir: string) {
-    for (const file of FILES) {
-      const filepath = path.resolve(path.join(dir, file))
-      if (await Filesystem.exists(filepath)) return filepath
-    }
-  }
-
-  export async function resolve(messages: MessageV2.WithParts[], filepath: string, messageID: string) {
-    const system = await systemPaths()
-    const already = loaded(messages)
-    const results: { filepath: string; content: string }[] = []
-
-    const target = path.resolve(filepath)
-    let current = path.dirname(target)
-    const root = path.resolve(Instance.directory)
-
-    while (current.startsWith(root) && current !== root) {
-      const found = await find(current)
-
-      if (found && found !== target && !system.has(found) && !already.has(found) && !isClaimed(messageID, found)) {
-        claim(messageID, found)
-        const content = await Filesystem.readText(found).catch(() => undefined)
-        if (content) {
-          results.push({ filepath: found, content: "Instructions from: " + found + "\n" + content })
-        }
-      }
-      current = path.dirname(current)
-    }
-
-    return results
+  export async function resolve(messages: MessageV2.WithParts[], filepath: string, messageID: MessageID) {
+    return runPromise((svc) => svc.resolve(messages, filepath, messageID))
   }
 }
 

@@ -121,8 +121,6 @@ export namespace Pty {
   export const layer = Layer.effect(
     Service,
     Effect.gen(function* () {
-      const bus = yield* Bus.Service
-      const plugin = yield* Plugin.Service
       function teardown(session: Active) {
         try {
           session.process.kill()
@@ -164,7 +162,7 @@ export namespace Pty {
         total = Math.max(0, total - 1)
         log.info("removing session", { id })
         teardown(session)
-        yield* bus.publish(Event.Deleted, { id: session.info.id })
+        void Bus.publish(Event.Deleted, { id: session.info.id })
       })
 
       const list = Effect.fn("Pty.list")(function* () {
@@ -197,21 +195,19 @@ export namespace Pty {
             OPENCODE_TERMINAL: "1",
           } as Record<string, string>
 
-        if (process.platform === "win32") {
-          env.LC_ALL = "C.UTF-8"
-          env.LC_CTYPE = "C.UTF-8"
-          env.LANG = "C.UTF-8"
-        }
-        log.info("creating session", { id, cmd: command, args, cwd })
+          if (process.platform === "win32") {
+            env.LC_ALL = "C.UTF-8"
+            env.LC_CTYPE = "C.UTF-8"
+            env.LANG = "C.UTF-8"
+          }
+          log.info("creating session", { id, cmd: command, args, cwd })
 
-        const spawn = yield* Effect.promise(() => pty())
-        const proc = yield* Effect.sync(() =>
-          spawn(command, args, {
+          const spawn = await pty()
+          const proc = spawn(command, args, {
             name: "xterm-256color",
             cwd,
             env,
-          }),
-        )
+          })
 
           const info = {
             id,
@@ -237,21 +233,21 @@ export namespace Pty {
             Instance.bind((chunk) => {
               session.cursor += chunk.length
 
-            for (const [key, ws] of session.subscribers.entries()) {
-              if (ws.readyState !== 1) {
-                session.subscribers.delete(key)
-                continue
+              for (const [key, ws] of session.subscribers.entries()) {
+                if (ws.readyState !== 1) {
+                  session.subscribers.delete(key)
+                  continue
+                }
+                if (ws.data !== key) {
+                  session.subscribers.delete(key)
+                  continue
+                }
+                try {
+                  ws.send(chunk)
+                } catch {
+                  session.subscribers.delete(key)
+                }
               }
-              if (ws.data !== key) {
-                session.subscribers.delete(key)
-                continue
-              }
-              try {
-                ws.send(chunk)
-              } catch {
-                session.subscribers.delete(key)
-              }
-            }
 
               session.chunks.push(chunk)
               session.bufferSize += chunk.length

@@ -10,9 +10,8 @@ import { LSP } from "../lsp"
 import { FileTime } from "../file/time"
 import DESCRIPTION from "./read.txt"
 import { Instance } from "../project/instance"
-import { assertExternalDirectory } from "./external-directory"
-import { InstructionPrompt } from "../session/instruction"
-import { Filesystem } from "../util/filesystem"
+import { assertExternalDirectoryEffect } from "./external-directory"
+import { Instruction } from "../session/instruction"
 
 const DEFAULT_READ_LIMIT = 2000
 const MAX_LINE_LENGTH = 2000
@@ -20,22 +19,11 @@ const MAX_LINE_SUFFIX = `... (line truncated to ${MAX_LINE_LENGTH} chars)`
 const MAX_BYTES = 50 * 1024
 const MAX_BYTES_LABEL = `${MAX_BYTES / 1024} KB`
 
-export const ReadTool = Tool.define("read", {
-  description: DESCRIPTION,
-  parameters: z.object({
-    filePath: z.string().describe("The absolute path to the file or directory to read"),
-    offset: z.coerce.number().describe("The line number to start reading from (1-indexed)").optional(),
-    limit: z.coerce.number().describe("The maximum number of lines to read (defaults to 2000)").optional(),
-  }),
-  async execute(params, ctx) {
-    if (params.offset !== undefined && params.offset < 1) {
-      throw new Error("offset must be greater than or equal to 1")
-    }
-    let filepath = params.filePath
-    if (!path.isAbsolute(filepath)) {
-      filepath = path.resolve(Instance.directory, filepath)
-    }
-    const title = path.relative(Instance.worktree, filepath)
+const parameters = z.object({
+  filePath: z.string().describe("The absolute path to the file or directory to read"),
+  offset: z.coerce.number().describe("The line number to start reading from (1-indexed)").optional(),
+  limit: z.coerce.number().describe("The maximum number of lines to read (defaults to 2000)").optional(),
+})
 
 export const ReadTool = Tool.defineEffect(
   "read",
@@ -227,43 +215,6 @@ export const ReadTool = Tool.defineEffect(
           loaded: loaded.map((item) => item.filepath),
         },
       }
-    }
-
-    const instructions = await InstructionPrompt.resolve(ctx.messages, filepath, ctx.messageID)
-
-    // Exclude SVG (XML-based) and vnd.fastbidsheet (.fbs extension, commonly FlatBuffers schema files)
-    const mime = Filesystem.mimeType(filepath)
-    const isImage = mime.startsWith("image/") && mime !== "image/svg+xml" && mime !== "image/vnd.fastbidsheet"
-    const isPdf = mime === "application/pdf"
-    if (isImage || isPdf) {
-      const msg = `${isImage ? "Image" : "PDF"} read successfully`
-      return {
-        title,
-        output: msg,
-        metadata: {
-          preview: msg,
-          truncated: false,
-          loaded: instructions.map((i) => i.filepath),
-        },
-        attachments: [
-          {
-            type: "file",
-            mime,
-            url: `data:${mime};base64,${Buffer.from(await Filesystem.readBytes(filepath)).toString("base64")}`,
-          },
-        ],
-      }
-    }
-
-    const isBinary = await isBinaryFile(filepath, Number(stat.size))
-    if (isBinary) throw new Error(`Cannot read binary file: ${filepath}`)
-
-    const stream = createReadStream(filepath, { encoding: "utf8" })
-    const rl = createInterface({
-      input: stream,
-      // Note: we use the crlfDelay option to recognize all instances of CR LF
-      // ('\r\n') in file as a single line break.
-      crlfDelay: Infinity,
     })
 
     return {

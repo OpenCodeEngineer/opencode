@@ -1542,7 +1542,6 @@ NOTE: At any point in time through this workflow you should feel free to ask the
 
   export const ShellInput = z.object({
     sessionID: SessionID.zod,
-    messageID: MessageID.zod.optional(),
     agent: z.string(),
     model: z
       .object({

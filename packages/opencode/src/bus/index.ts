@@ -2,6 +2,7 @@ import z from "zod"
 import { Effect, Layer, PubSub, ServiceMap, Stream } from "effect"
 import { Log } from "../util/log"
 import { Instance } from "../project/instance"
+import { Context } from "../util/context"
 import { BusEvent } from "./bus-event"
 import { GlobalBus } from "./global"
 
@@ -91,18 +92,31 @@ export namespace Bus {
 
   function raw(type: string, callback: (event: any) => void) {
     log.info("subscribing", { type })
-    const subscriptions = state().subscriptions
-    let match = subscriptions.get(type) ?? []
-    match.push(callback)
-    subscriptions.set(type, match)
+    try {
+      const subscriptions = state().subscriptions
+      const match = subscriptions.get(type) ?? []
+      match.push(callback)
+      subscriptions.set(type, match)
 
-    return () => {
-      log.info("unsubscribing", { type })
-      const match = subscriptions.get(type)
-      if (!match) return
-      const index = match.indexOf(callback)
-      if (index === -1) return
-      match.splice(index, 1)
+      return () => {
+        log.info("unsubscribing", { type })
+        const match = subscriptions.get(type)
+        if (!match) return
+        const index = match.indexOf(callback)
+        if (index === -1) return
+        match.splice(index, 1)
+      }
+    } catch (err) {
+      if (!(err instanceof Context.NotFound)) throw err
+      const forward = (event: { payload: any }) => {
+        if (type !== "*" && event.payload?.type !== type) return
+        callback(event.payload)
+      }
+      GlobalBus.on("event", forward)
+      return () => {
+        log.info("unsubscribing", { type })
+        GlobalBus.off("event", forward)
+      }
     }
   }
 
