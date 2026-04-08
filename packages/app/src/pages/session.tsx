@@ -46,7 +46,10 @@ import {
   reviewDone,
   reviewPick,
   reviewPrompt,
+  reviewPromptFor,
   reviewPromptCheck,
+  reviewPromptKind,
+  type ReviewKind,
 } from "@/pages/session/auto-review"
 import {
   createOpenReviewFile,
@@ -69,8 +72,16 @@ import { same } from "@/utils/same"
 import { formatServerError } from "@/utils/server-errors"
 
 const emptyUserMessages: UserMessage[] = []
-type QueuedFollowup = FollowupDraft & { id: string; autoReviewSource?: string }
+type QueuedFollowup = FollowupDraft & { id: string; autoReviewSource?: string; autoReviewPhase?: ReviewKind }
 const emptyFollowups: QueuedFollowup[] = []
+type ReviewModel = { providerID: string; modelID: string }
+type ReviewState = {
+  source: string
+  phase: ReviewKind
+  worker: ReviewModel
+  supervisor?: ReviewModel
+  tries: Record<ReviewKind, number>
+}
 
 type ChangeMode = "git" | "branch" | "session" | "turn"
 type VcsMode = "git" | "branch"
@@ -536,12 +547,13 @@ export default function Page() {
     failed: {} as Record<string, string | undefined>,
     paused: {} as Record<string, boolean | undefined>,
     autoReview: {} as Record<string, string | undefined>,
+    review: {} as Record<string, ReviewState | undefined>,
+    pending: {} as Record<string, string | undefined>,
     edit: {} as Record<
       string,
       { id: string; prompt: FollowupDraft["prompt"]; context: FollowupDraft["context"] } | undefined
     >,
   })
-
   createComputed((prev) => {
     const key = sessionKey()
     if (key !== prev) {
@@ -1641,6 +1653,8 @@ export default function Page() {
   }
 
   const isAutoReviewPrompt = (id: string) => reviewPromptCheck(line(id))
+  const model = (providerID: string, modelID: string): ReviewModel => ({ providerID, modelID })
+  const reviewLimit = 3
 
   const response = (id: string) =>
     (sync.data.part[id] ?? [])
@@ -1657,7 +1671,7 @@ export default function Page() {
     )
   })
 
-  const resolveReview = (assistant: AssistantMessage) => {
+  const resolveReview = (assistant: AssistantMessage, exclude?: ReviewModel[]) => {
     const current = local.model.current()
     const configured = (() => {
       const model = sync.data.config.auto_review?.model
@@ -1683,28 +1697,35 @@ export default function Page() {
             modelID: current.id,
           }
         : undefined,
+      exclude,
     })
   }
 
-  const queueAutoReview = (sessionID: string, assistant: AssistantMessage) => {
+  const queueAutoReview = (input: {
+    sessionID: string
+    source: string
+    phase: ReviewKind
+    assistant: AssistantMessage
+    worker: ReviewModel
+    exclude?: ReviewModel[]
+  }) => {
+    const sessionID = input.sessionID
     const queued = followup.items[sessionID] ?? []
-    if (queued.some((item) => item.autoReviewSource === assistant.id)) {
-      setFollowup("autoReview", sessionID, assistant.id)
-      return
-    }
+    if (queued.some((item) => item.autoReviewSource === input.source && item.autoReviewPhase === input.phase)) return
 
-    const review = resolveReview(assistant)
-    const agent = assistant.agent ?? local.agent.current()?.name
+    const review = resolveReview(input.assistant, input.exclude)
+    const agent = input.assistant.agent ?? local.agent.current()?.name
     if (!review || !agent) return
 
-    const previous = `${assistant.providerID}/${assistant.modelID}`
-    const text = reviewPrompt(previous)
+    const previous = `${input.assistant.providerID}/${input.assistant.modelID}`
+    const text = input.phase === "supervisor" ? reviewPrompt(previous) : reviewPromptFor(previous, input.phase)
 
     setFollowup("items", sessionID, (items) => [
       ...(items ?? []),
       {
         id: Identifier.ascending("message"),
-        autoReviewSource: assistant.id,
+        autoReviewSource: input.source,
+        autoReviewPhase: input.phase,
         sessionID,
         sessionDirectory: sdk.directory,
         prompt: [{ type: "text", content: text, start: 0, end: text.length }],
@@ -1714,9 +1735,19 @@ export default function Page() {
         variant: review.variant,
       },
     ])
-    setFollowup("autoReview", sessionID, assistant.id)
+    setFollowup("review", sessionID, (state) => ({
+      source: input.source,
+      phase: input.phase,
+      worker: state?.source === input.source ? state.worker : input.worker,
+      supervisor: input.phase === "supervisor" ? review.model : state?.supervisor,
+      tries:
+        state?.source === input.source
+          ? { ...state.tries, [input.phase]: (state.tries[input.phase] ?? 0) + 1 }
+          : { supervisor: input.phase === "supervisor" ? 1 : 0, "cross-review": input.phase === "cross-review" ? 1 : 0 },
+    }))
     setFollowup("failed", sessionID, undefined)
     setFollowup("paused", sessionID, undefined)
+    return review.model
   }
 
   createEffect(() => {
@@ -1727,21 +1758,123 @@ export default function Page() {
 
     const assistant = doneAssistant()
     if (!assistant) return
+    if (followup.pending[sessionID] === assistant.id) return
     if (followup.autoReview[sessionID] === assistant.id) return
 
     const user = visibleUserMessages().at(-1)
     if (!user) return
-    if (isAutoReviewPrompt(user.id)) {
+    const kind = isAutoReviewPrompt(user.id) ? reviewPromptKind(line(user.id)) : undefined
+    if (!kind) {
+      const pick = queueAutoReview({
+        sessionID,
+        source: assistant.id,
+        phase: "supervisor",
+        assistant,
+        worker: model(assistant.providerID, assistant.modelID),
+      })
+      if (!pick) {
+        setFollowup("autoReview", sessionID, assistant.id)
+        return
+      }
+      setFollowup("autoReview", sessionID, assistant.id)
+      return
+    }
+
+    const state = followup.review[sessionID]
+    if (!state) {
       if (reviewDone(response(assistant.id))) {
         setFollowup("autoReview", sessionID, assistant.id)
         return
       }
-
-      queueAutoReview(sessionID, assistant)
+      const pick = queueAutoReview({
+        sessionID,
+        source: assistant.id,
+        phase: "supervisor",
+        assistant,
+        worker: model(assistant.providerID, assistant.modelID),
+      })
+      if (!pick) {
+        setFollowup("autoReview", sessionID, assistant.id)
+        return
+      }
+      setFollowup("autoReview", sessionID, assistant.id)
+      return
+    }
+    const review = state.phase === kind ? state : { ...state, phase: kind }
+    if (state.phase !== kind) setFollowup("review", sessionID, review)
+    if (!reviewDone(response(assistant.id))) {
+      if ((review.tries[kind] ?? 0) >= reviewLimit) {
+        setFollowup("review", sessionID, undefined)
+        setFollowup("autoReview", sessionID, assistant.id)
+        return
+      }
+      const exclude =
+        kind === "cross-review"
+          ? [review.worker, review.supervisor ?? review.worker]
+          : [review.worker]
+      const pick = queueAutoReview({
+        sessionID,
+        source: review.source,
+        phase: kind,
+        assistant,
+        worker: review.worker,
+        exclude,
+      })
+      if (!pick) {
+        setFollowup("review", sessionID, undefined)
+        setFollowup("autoReview", sessionID, assistant.id)
+        return
+      }
+      setFollowup("autoReview", sessionID, assistant.id)
       return
     }
 
-    queueAutoReview(sessionID, assistant)
+    if (kind === "cross-review") {
+      setFollowup("review", sessionID, undefined)
+      setFollowup("autoReview", sessionID, assistant.id)
+      return
+    }
+
+    setFollowup("pending", sessionID, assistant.id)
+    const snapshot = { source: review.source, worker: review.worker, supervisor: review.supervisor }
+    const compact = local.model.current()
+    const selected = compact ? model(compact.provider.id, compact.id) : model(assistant.providerID, assistant.modelID)
+    void sdk.client.session
+      .summarize({
+        sessionID,
+        providerID: selected.providerID,
+        modelID: selected.modelID,
+      })
+      .then(() => {
+        const current = followup.review[sessionID]
+        if (current && current.source !== snapshot.source) return
+        const parent = snapshot.supervisor ?? model(assistant.providerID, assistant.modelID)
+        const pick = queueAutoReview({
+          sessionID,
+          source: snapshot.source,
+          phase: "cross-review",
+          assistant,
+          worker: snapshot.worker,
+          exclude: [parent, snapshot.worker],
+        })
+        if (!pick) {
+          setFollowup("review", sessionID, undefined)
+          setFollowup("autoReview", sessionID, assistant.id)
+          return
+        }
+        setFollowup("autoReview", sessionID, assistant.id)
+      })
+      .catch((err) => {
+        fail(err)
+        const current = followup.review[sessionID]
+        if (!current || current.source === snapshot.source) {
+          setFollowup("review", sessionID, undefined)
+        }
+        setFollowup("autoReview", sessionID, assistant.id)
+      })
+      .finally(() => {
+        setFollowup("pending", sessionID, (value) => (value === assistant.id ? undefined : value))
+      })
   })
 
   const followupDock = createMemo(() => queuedFollowups().map((item) => ({ id: item.id, text: followupText(item) })))
