@@ -1869,14 +1869,17 @@ export const PromptInput: Component<PromptInputProps> = (props) => {
                         title={language.t("command.model.choose")}
                         keybind={command.keybind("model.choose")}
                       >
-                        <Button
-                          data-action="prompt-model"
-                          as="div"
-                          variant="ghost"
-                          size="normal"
-                          class="min-w-0 max-w-[320px] text-13-regular text-text-base group"
-                          style={control()}
-                          onClick={() => dialog.show(() => <DialogSelectModelUnpaid model={local.model} />)}
+                        <ModelSelectorPopover
+                          model={local.model}
+                          triggerAs={Button}
+                          triggerProps={{
+                            variant: "ghost",
+                            size: "normal",
+                            style: control(),
+                            class: "min-w-0 max-w-[320px] text-13-regular text-text-base group",
+                            "data-action": "prompt-model",
+                          }}
+                          onClose={restoreFocus}
                         >
                           <Show when={local.model.current()?.provider?.id}>
                             <ProviderIcon
