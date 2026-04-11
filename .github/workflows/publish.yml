@@ -8,6 +8,7 @@ on:
       - dev
       - beta
       - snapshot-*
+      - main
   workflow_dispatch:
     inputs:
       bump:
@@ -213,6 +214,7 @@ jobs:
     needs:
       - build-cli
       - version
+    if: github.repository == 'anomalyco/opencode'
     continue-on-error: false
     env:
       AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
@@ -389,6 +391,7 @@ jobs:
     needs:
       - build-cli
       - version
+    if: github.repository == 'anomalyco/opencode'
     continue-on-error: false
     env:
       AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
@@ -547,6 +550,7 @@ jobs:
       - sign-cli-windows
       - build-tauri
       - build-electron
+    if: always() && needs.version.result == 'success' && needs.build-cli.result == 'success' && (needs.sign-cli-windows.result == 'success' || needs.sign-cli-windows.result == 'skipped') && (needs.build-tauri.result == 'success' || needs.build-tauri.result == 'skipped') && (needs.build-electron.result == 'success' || needs.build-electron.result == 'skipped')
     runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@v3
@@ -628,3 +632,4 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN || secrets.NODE_AUTH_TOKEN }}
           NPM_CONFIG_PROVENANCE: false
           LATEST_YML_DIR: /tmp/latest-yml
+___BEGIN___COMMAND_DONE_MARKER___0
