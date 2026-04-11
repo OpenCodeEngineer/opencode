@@ -525,12 +525,12 @@ export namespace Server {
           const target = reqpath === "/" ? "index.html" : reqpath.slice(1)
           const file = Bun.file(join(dir, target))
           if (await file.exists()) {
-            return new Response(file, {
-              headers: {
-                "Content-Type": file.type,
-                "Content-Security-Policy": csp,
-              },
-            })
+            const headers: Record<string, string> = {
+              "Content-Type": file.type,
+              "Content-Security-Policy": csp,
+            }
+            if (file.type.startsWith("text/html")) headers["Cache-Control"] = "no-cache"
+            return new Response(file, { headers })
           }
           // Only use SPA fallback for extensionless client-side routes.
           if (!extname(reqpath)) {
@@ -540,6 +540,7 @@ export namespace Server {
                 headers: {
                   "Content-Type": "text/html",
                   "Content-Security-Policy": csp,
+                  "Cache-Control": "no-cache",
                 },
               })
             }
