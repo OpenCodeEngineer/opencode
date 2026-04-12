@@ -1,4 +1,4 @@
-import type { AssistantMessage, Project, UserMessage } from "@opencode-ai/sdk/v2"
+import type { AssistantMessage, FileDiff, Project, UserMessage } from "@opencode-ai/sdk/v2"
 import { useDialog } from "@opencode-ai/ui/context/dialog"
 import { useMutation } from "@tanstack/solid-query"
 import {
@@ -540,6 +540,17 @@ export default function Page() {
     changes: "git" as ChangeMode,
     newSessionWorktree: "main",
     deferRender: false,
+  })
+
+  const [vcs, setVcs] = createStore({
+    diff: {
+      git: [] as FileDiff[],
+      branch: [] as FileDiff[],
+    },
+    ready: {
+      git: false,
+      branch: false,
+    },
   })
 
   const [followup, setFollowup] = createStore({
