@@ -1440,6 +1440,10 @@ export namespace Provider {
       return getModel(parsed.providerID, parsed.modelID)
     }
 
+    // GitHub Copilot frequently rejects "small" defaults for title generation.
+    // Fall back to the active session model instead.
+    if (providerID.startsWith("github-copilot")) return undefined
+
     const provider = await state().then((state) => state.providers[providerID])
     if (provider) {
       let priority = [
@@ -1453,10 +1457,6 @@ export namespace Provider {
       ]
       if (providerID.startsWith("opencode")) {
         priority = ["gpt-5-nano"]
-      }
-      if (providerID.startsWith("github-copilot")) {
-        // prioritize broadly available low-cost models for github copilot
-        priority = ["claude-haiku-4.5", "gpt-5-nano", ...priority]
       }
       for (const item of priority) {
         if (providerID === ProviderID.amazonBedrock) {
