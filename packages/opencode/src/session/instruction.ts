@@ -8,6 +8,7 @@ import { Flag } from "@/flag/flag"
 import { Log } from "../util/log"
 import { Glob } from "../util/glob"
 import type { MessageV2 } from "./message-v2"
+import type { MessageID } from "./schema"
 import { Effect, Layer, ServiceMap } from "effect"
 
 const log = Log.create({ service: "instruction" })
@@ -115,6 +116,28 @@ export namespace InstructionPrompt {
     return paths
   }
 
+  export async function system() {
+    const config = await Config.get()
+    const paths = await systemPaths()
+
+    const files = Array.from(paths).map(async (p) => {
+      const content = await Filesystem.readText(p).catch(() => "")
+      if (!content) return ""
+      return "Instructions from: " + p + "\n" + content
+    })
+
+    const urls =
+      config.instructions?.filter((item) => item.startsWith("https://") || item.startsWith("http://")) ?? []
+    const fetches = urls.map((url) =>
+      fetch(url, { signal: AbortSignal.timeout(5000) })
+        .then((res) => (res.ok ? res.text() : ""))
+        .catch(() => "")
+        .then((x) => (x ? "Instructions from: " + url + "\n" + x : "")),
+    )
+
+    return Promise.all([...files, ...fetches]).then((result) => result.filter(Boolean))
+  }
+
   export function loaded(messages: MessageV2.WithParts[]) {
     const paths = new Set<string>()
     for (const msg of messages) {
@@ -132,8 +155,35 @@ export namespace InstructionPrompt {
     return paths
   }
 
+  export async function find(dir: string) {
+    for (const file of FILES) {
+      const filepath = path.resolve(path.join(dir, file))
+      if (await Filesystem.exists(filepath)) return filepath
+    }
+  }
+
   export async function resolve(messages: MessageV2.WithParts[], filepath: string, messageID: MessageID) {
-    return runPromise((svc) => svc.resolve(messages, filepath, messageID))
+    const system = await systemPaths()
+    const already = loaded(messages)
+    const results: { filepath: string; content: string }[] = []
+
+    let current = path.dirname(path.resolve(filepath))
+    const root = path.resolve(Instance.directory)
+
+    while (current.startsWith(root)) {
+      const found = await find(current)
+      if (found && !system.has(found) && !already.has(found) && !isClaimed(messageID, found)) {
+        const content = await Filesystem.readText(found).catch(() => undefined)
+        if (content) {
+          claim(messageID, found)
+          results.push({ filepath: found, content: "Instructions from: " + found + "\n" + content })
+        }
+      }
+      if (current === root) break
+      current = path.dirname(current)
+    }
+
+    return results
   }
 }
 
@@ -147,6 +197,11 @@ export namespace Instruction {
   export interface EffectInterface {
     systemPaths(): Effect.Effect<Set<string>>
     system(): Effect.Effect<string[]>
+    resolve(
+      messages: MessageV2.WithParts[],
+      filepath: string,
+      messageID: MessageID,
+    ): Effect.Effect<{ filepath: string; content: string }[]>
   }
 
   export class Service extends ServiceMap.Service<Service, EffectInterface>()("@opencode/Instruction") {}
@@ -156,6 +211,8 @@ export namespace Instruction {
     Effect.sync((): EffectInterface => ({
       systemPaths: () => Effect.promise(() => InstructionPrompt.systemPaths()),
       system: () => Effect.promise(() => InstructionPrompt.system()),
+      resolve: (messages, filepath, messageID) =>
+        Effect.promise(() => InstructionPrompt.resolve(messages, filepath, messageID)),
     })),
   )
 

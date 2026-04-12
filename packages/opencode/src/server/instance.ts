@@ -3,6 +3,7 @@ import { Hono } from "hono"
 import { proxy } from "hono/proxy"
 import z from "zod"
 import { createHash } from "node:crypto"
+import { extname } from "node:path"
 import { Log } from "../util/log"
 import { Format } from "../format"
 import { TuiRoutes } from "./routes/tui"
@@ -282,13 +283,29 @@ export const InstanceRoutes = (app?: Hono) =>
       const path = c.req.path
 
       if (embeddedWebUI) {
-        const match = embeddedWebUI[path.replace(/^\//, "")] ?? embeddedWebUI["index.html"] ?? null
-        if (!match) return c.json({ error: "Not Found" }, 404)
-        const file = Bun.file(match)
+        const stripped = path.replace(/^\//, "")
+        const matched = embeddedWebUI[stripped] ?? null
+
+        if (!matched) {
+          // Only use SPA fallback for extensionless client-side routes.
+          // Asset paths (e.g. .js, .css) must 404 so stale clients detect redeployments.
+          if (extname(path)) return c.json({ error: "Not Found" }, 404)
+          const index = embeddedWebUI["index.html"]
+          if (!index) return c.json({ error: "Not Found" }, 404)
+          const html = Bun.file(index)
+          if (!(await html.exists())) return c.json({ error: "Not Found" }, 404)
+          c.header("Content-Type", "text/html")
+          c.header("Content-Security-Policy", DEFAULT_CSP)
+          c.header("Cache-Control", "no-cache")
+          return c.body(await html.arrayBuffer())
+        }
+
+        const file = Bun.file(matched)
         if (await file.exists()) {
           c.header("Content-Type", file.type)
           if (file.type.startsWith("text/html")) {
             c.header("Content-Security-Policy", DEFAULT_CSP)
+            c.header("Cache-Control", "no-cache")
           }
           return c.body(await file.arrayBuffer())
         } else {

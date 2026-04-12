@@ -1405,7 +1405,7 @@ PART_MAPPING["text"] = function TextPartDisplay(props) {
     if (typeof props.showAssistantCopyPartID === "string") return props.showAssistantCopyPartID === part().id
     return isLastTextPart()
   })
-  const showSpeak = createMemo(() => props.message.role === "assistant" && isLastTextPart() && !!displayText())
+  const showSpeak = createMemo(() => props.message.role === "assistant" && isLastTextPart() && !!text())
   const [copied, setCopied] = createSignal(false)
 
   const handleCopy = async () => {
@@ -1447,7 +1447,7 @@ PART_MAPPING["text"] = function TextPartDisplay(props) {
                   size="normal"
                   variant="ghost"
                   onMouseDown={(e) => e.preventDefault()}
-                  onClick={() => props.onSpeak?.({ messageID: props.message.id, text: displayText() })}
+                  onClick={() => props.onSpeak?.({ messageID: props.message.id, text: text() })}
                   aria-label={i18n.t("ui.message.speakResponse")}
                 />
               </Tooltip>
