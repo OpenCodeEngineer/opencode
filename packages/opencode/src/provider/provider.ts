@@ -1455,8 +1455,8 @@ export namespace Provider {
         priority = ["gpt-5-nano"]
       }
       if (providerID.startsWith("github-copilot")) {
-        // prioritize free models for github copilot
-        priority = ["gpt-5-mini", "claude-haiku-4.5", ...priority]
+        // prioritize broadly available low-cost models for github copilot
+        priority = ["claude-haiku-4.5", "gpt-5-nano", ...priority]
       }
       for (const item of priority) {
         if (providerID === ProviderID.amazonBedrock) {
