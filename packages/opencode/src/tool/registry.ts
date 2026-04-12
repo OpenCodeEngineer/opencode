@@ -150,6 +150,11 @@ export namespace ToolRegistry {
     const result = await Promise.all(
       tools
         .filter((t) => {
+          if (typeof (t as any)?.init !== "function") {
+            log.warn("skipping invalid tool", { id: (t as any)?.id ?? "unknown" })
+            return false
+          }
+
           // Enable websearch/codesearch for zen users OR via enable flag
           if (t.id === "codesearch" || t.id === "websearch") {
             return model.providerID === ProviderID.opencode || Flag.OPENCODE_ENABLE_EXA
@@ -164,15 +169,16 @@ export namespace ToolRegistry {
           return true
         })
         .map(async (t) => {
-          using _ = log.time(t.id)
-          const tool = await t.init({ agent })
+          const item = t as Tool.Info
+          using _ = log.time(item.id)
+          const tool = await item.init({ agent })
           const output = {
             description: tool.description,
             parameters: tool.parameters,
           }
-          await Plugin.trigger("tool.definition", { toolID: t.id }, output)
+          await Plugin.trigger("tool.definition", { toolID: item.id }, output)
           return {
-            id: t.id,
+            id: item.id,
             ...tool,
             description: output.description,
             parameters: output.parameters,
