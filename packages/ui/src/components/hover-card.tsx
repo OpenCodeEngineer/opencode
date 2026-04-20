@@ -6,15 +6,21 @@ export interface HoverCardProps extends ParentProps, Omit<ComponentProps<typeof 
   mount?: HTMLElement
   class?: ComponentProps<"div">["class"]
   classList?: ComponentProps<"div">["classList"]
+  passiveTrigger?: boolean
 }
 
 export function HoverCard(props: HoverCardProps) {
-  const [local, rest] = splitProps(props, ["trigger", "mount", "class", "classList", "children"])
+  const [local, rest] = splitProps(props, ["trigger", "mount", "class", "classList", "children", "passiveTrigger"])
 
   return (
     <Kobalte gutter={4} {...rest}>
-      <Kobalte.Trigger as="div" data-slot="hover-card-trigger" tabIndex={-1}>
-        {local.trigger}
+      <Kobalte.Trigger
+        as="div"
+        data-slot="hover-card-trigger"
+        tabIndex={-1}
+        classList={{ "pointer-events-none": !!local.passiveTrigger }}
+      >
+        {local.passiveTrigger ? <div class="pointer-events-auto">{local.trigger}</div> : local.trigger}
       </Kobalte.Trigger>
       <Kobalte.Portal mount={local.mount}>
         <Kobalte.Content

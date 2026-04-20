@@ -354,6 +354,7 @@ export const SortableProject = (props: {
     <div use:sortable classList={{ "opacity-30": sortable.isActiveDraggable }}>
       <Show when={preview() && !selected()} fallback={tile()}>
         <HoverCard
+          passiveTrigger
           open={!state.suppressHover && hoverOpen() && !state.menu}
           openDelay={0}
           closeDelay={0}
