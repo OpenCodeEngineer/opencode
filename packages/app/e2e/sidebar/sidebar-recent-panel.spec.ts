@@ -241,22 +241,22 @@ test("child sessions in recent panel can be collapsed and expanded", async ({ pa
     const rootItem = nav.locator(`[data-session-id="${root.id}"]`).first()
     const childItem = nav.locator(`[data-session-id="${child.id}"]`).first()
 
-    // Children visible by default
-    await expect(childItem).toBeVisible()
+    // Children collapsed by default
+    await expect(childItem).not.toBeVisible()
 
     // Collapse toggle button should be present on the root item
     const toggle = rootItem.locator('[data-action="session-children-toggle"]').first()
     await expect(toggle).toBeVisible()
-    await expect(toggle).toHaveAttribute("aria-expanded", "true")
-
-    // Click to collapse
-    await toggle.click()
-    await expect(childItem).not.toBeVisible()
     await expect(toggle).toHaveAttribute("aria-expanded", "false")
 
-    // Click to expand again
+    // Click to expand
     await toggle.click()
     await expect(childItem).toBeVisible()
     await expect(toggle).toHaveAttribute("aria-expanded", "true")
+
+    // Click to collapse again
+    await toggle.click()
+    await expect(childItem).not.toBeVisible()
+    await expect(toggle).toHaveAttribute("aria-expanded", "false")
   })
 })

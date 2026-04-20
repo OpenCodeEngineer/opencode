@@ -335,7 +335,7 @@ export const SessionItem = (props: SessionItemProps): JSX.Element => {
       .filter((s): s is Session => s !== undefined && !s.time?.archived),
   )
 
-  const [collapsed, setCollapsed] = createSignal(false)
+  const [collapsed, setCollapsed] = createSignal(!!props.collapsible)
   const hasChildren = createMemo(() => childSessions().length > 0)
   const showToggle = createMemo(() => props.collapsible && hasChildren())
 
