@@ -18,7 +18,7 @@ export function HoverCard(props: HoverCardProps) {
         as="div"
         data-slot="hover-card-trigger"
         tabIndex={-1}
-        classList={{ "pointer-events-none": !!local.passiveTrigger }}
+        class={local.passiveTrigger ? "pointer-events-none" : undefined}
       >
         {local.passiveTrigger ? <div class="pointer-events-auto">{local.trigger}</div> : local.trigger}
       </Kobalte.Trigger>
