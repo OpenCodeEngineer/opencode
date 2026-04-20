@@ -163,7 +163,7 @@ export default function Layout(props: ParentProps) {
   })
 
   createEffect(() => {
-    setState("recent", params.dir === "recent")
+    if (params.dir === "recent") setState("recent", true)
   })
 
   const editor = createInlineEditorController()
@@ -1040,7 +1040,7 @@ export default function Layout(props: ParentProps) {
       if (nextSession) {
         navigate(`/${params.dir}/session/${nextSession.id}`)
       } else {
-        navigate(params.dir === "recent" ? "/recent" : `/${params.dir}/session`)
+        navigate(params.dir === "recent" ? "/" : `/${params.dir}/session`)
       }
     }
     return true
@@ -2429,7 +2429,7 @@ export default function Layout(props: ParentProps) {
         <RecentTile
           selected={() => state.recent}
           onClick={() => {
-            navigate(params.id ? `/recent/session/${params.id}` : "/recent")
+            setState("recent", true)
             layout.sidebar.open()
           }}
         />

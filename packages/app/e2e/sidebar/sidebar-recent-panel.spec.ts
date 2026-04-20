@@ -159,8 +159,9 @@ test("clicking recent tile deselects the active project tile", async ({ page, wi
 
     await recentTile.click()
 
-    // URL should now be canonical recent route
-    await expect(page).toHaveURL(new RegExp(`/recent/session/${session.id}`))
+    // Sidebar should show recent panel (not navigate to a separate page)
+    const nav = page.locator('[data-component="sidebar-nav-desktop"]').first()
+    await expect(nav.getByText("Across all projects").first()).toBeVisible()
 
     // Recent tile should now be selected
     await expect(recentTile).toHaveAttribute("class", /border-2/)
@@ -169,11 +170,17 @@ test("clicking recent tile deselects the active project tile", async ({ page, wi
   })
 })
 
-test("clicking recent tile with no active session navigates to /recent", async ({ page, withProject }) => {
+test("clicking recent tile with no active session shows recent panel in sidebar", async ({ page, withProject }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
 
-  await withProject(async () => {
-    await page.goto("/")
+  await withProject(async ({ directory, gotoSession, trackSession }) => {
+    const stamp = Date.now()
+    const title = `e2e recent no-nav ${stamp}`
+    const session = await createSdk(directory).session.create({ title }).then((r) => r.data)
+    if (!session?.id) throw new Error("Session create did not return an id")
+    trackSession(session.id, directory)
+
+    await gotoSession(session.id)
     await openSidebar(page)
 
     const recentTile = page
@@ -181,11 +188,16 @@ test("clicking recent tile with no active session navigates to /recent", async (
       .getByRole("button", { name: /recent sessions/i })
     await recentTile.click()
 
-    await expect(page).toHaveURL("/recent")
+    // Should stay on the same page (not navigate to /recent)
+    await expect(page).not.toHaveURL("/recent")
+
+    // Sidebar should show the recent panel
+    const nav = page.locator('[data-component="sidebar-nav-desktop"]').first()
+    await expect(nav.getByText("Across all projects").first()).toBeVisible()
   })
 })
 
-test("clicking a session in recent panel keeps /recent/session/:id URL", async ({ page, withProject }) => {
+test("clicking a session in recent panel navigates to /recent/session/:id URL", async ({ page, withProject }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
 
   await withProject(async ({ directory, gotoSession, trackSession }) => {
@@ -202,14 +214,13 @@ test("clicking a session in recent panel keeps /recent/session/:id URL", async (
     const tile = page.locator('[data-component="sidebar-rail"]').getByRole("button", { name: /recent sessions/i })
     await tile.click()
 
-    await expect(page).toHaveURL(new RegExp(`/recent/session/${first.id}`))
-
     // Click the second session in the recent panel
     const nav = page.locator('[data-component="sidebar-nav-desktop"]').first()
     const secondItem = nav.locator(`[data-session-id="${second.id}"]`).first()
     await expect(secondItem).toBeVisible()
     await secondItem.locator("a").first().click()
 
+    // Navigating via session link in recent panel uses /recent/session/:id
     await expect(page).toHaveURL(new RegExp(`/recent/session/${second.id}`))
   })
 })

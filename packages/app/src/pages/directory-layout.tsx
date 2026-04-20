@@ -117,7 +117,7 @@ export default function Layout(props: ParentProps) {
         </Show>
       }
     >
-      <Show when={params.id} fallback={<Navigate href="/recent" />}>
+      <Show when={params.id} fallback={<Navigate href="/" />}>
         {(id) => <RecentSessionLayout id={id()}>{props.children}</RecentSessionLayout>}
       </Show>
     </Show>
