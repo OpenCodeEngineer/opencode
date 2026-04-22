@@ -1399,6 +1399,7 @@ export type Path = {
 
 export type VcsInfo = {
   branch: string
+  default_branch?: string
 }
 
 export type TextPartInput = {

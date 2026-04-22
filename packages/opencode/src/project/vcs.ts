@@ -24,6 +24,7 @@ export namespace Vcs {
   export const Info = z
     .object({
       branch: z.string(),
+      default_branch: z.string().optional(),
     })
     .meta({
       ref: "VcsInfo",
