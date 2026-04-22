@@ -9,7 +9,7 @@ import type {
 } from "@opencode-ai/sdk/v2/client"
 import { showToast } from "@opencode-ai/ui/toast"
 import { getFilename } from "@opencode-ai/util/path"
-import { createContext, getOwner, onCleanup, onMount, type ParentProps, untrack, useContext } from "solid-js"
+import { createContext, createSignal, getOwner, onCleanup, onMount, type ParentProps, untrack, useContext } from "solid-js"
 import { createStore, produce, reconcile } from "solid-js/store"
 import { useLanguage } from "@/context/language"
 import { Persist, persisted } from "@/utils/persist"
@@ -67,6 +67,8 @@ function createGlobalSync() {
     config: {},
     reload: undefined,
   })
+
+  const [reconnected, setReconnected] = createSignal(0)
 
   let active = true
   let projectWritten = false
@@ -289,6 +291,7 @@ function createGlobalSync() {
       })
       if (event.type === "server.connected" || event.type === "global.disposed") {
         if (recent) return
+        setReconnected(v => v + 1)
         for (const directory of Object.keys(children.children)) {
           queue.push(directory)
         }
@@ -363,7 +366,6 @@ function createGlobalSync() {
       .update({ config })
       .then(bootstrap)
       .then(() => {
-        queue.refresh()
         setGlobalStore("reload", undefined)
         queue.refresh()
       })
@@ -389,6 +391,9 @@ function createGlobalSync() {
     project: projectApi,
     todo: {
       set: setSessionTodo,
+    },
+    get reconnected() {
+      return reconnected()
     },
   }
 }

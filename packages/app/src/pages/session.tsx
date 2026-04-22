@@ -1583,6 +1583,16 @@ export default function Page() {
     )
   }
 
+  createEffect(on(
+    () => globalSync.reconnected,
+    () => {
+      const id = params.id
+      if (!id) return
+      sync.session.sync(id, { force: true })
+    },
+    { defer: true },
+  ))
+
   const queuedFollowups = createMemo(() => {
     const id = params.id
     if (!id) return emptyFollowups
