@@ -127,10 +127,10 @@ export default function Layout(props: ParentProps) {
   const command = useCommand()
   const theme = useTheme()
   const language = useLanguage()
-  const initialDirectory = decode64(params.dir)
+  const initialDirectory = params.dir === "recent" ? undefined : decode64(params.dir)
   const route = createMemo(() => {
     const slug = params.dir
-    if (!slug) return { slug, dir: "" }
+    if (!slug || slug === "recent") return { slug, dir: "" }
     const dir = decode64(slug)
     if (!dir) return { slug, dir: "" }
     return {
