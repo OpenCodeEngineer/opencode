@@ -100,6 +100,7 @@ export namespace Agent {
             question: "deny",
             plan_enter: "deny",
             plan_exit: "deny",
+            autopilot_exit: "deny",
             // mirrors github.com/github/gitignore Node.gitignore pattern for .env files
             read: {
               "*": "allow",
@@ -145,6 +146,21 @@ export namespace Agent {
                     [path.relative(Instance.worktree, path.join(Global.Path.data, path.join("plans", "*.md")))]:
                       "allow",
                   },
+                }),
+                user,
+              ),
+              mode: "primary",
+              native: true,
+            },
+            autopilot: {
+              name: "autopilot",
+              description: "Autopilot mode. Automatically reflects and continues working until all tasks are complete.",
+              options: {},
+              permission: Permission.merge(
+                defaults,
+                Permission.fromConfig({
+                  question: "allow",
+                  autopilot_exit: "allow",
                 }),
                 user,
               ),
