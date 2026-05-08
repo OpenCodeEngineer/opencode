@@ -1,0 +1,13 @@
+Call this tool when ALL tasks are complete in autopilot mode.
+
+This tool:
+- Signals that autopilot is complete
+- Switches back to build mode
+- Queues a final completion summary
+
+Call this tool ONLY when:
+- All requested tasks are done
+- There are no remaining next steps
+- You have verified the work is complete
+
+Do NOT call this tool if there are still tasks remaining.

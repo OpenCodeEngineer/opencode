@@ -1,0 +1,9 @@
+<system-reminder>
+Autopilot reflection checkpoint.
+
+tldr; what was the task? What is the status? What is completed? What is not completed? What are next steps?
+
+If you know what to do next — do it!
+
+When ALL tasks are complete and there is nothing left to do, call the `autopilot_exit` tool.
+</system-reminder>

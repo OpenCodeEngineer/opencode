@@ -20,6 +20,7 @@ import { SystemPrompt } from "./system"
 import { InstructionPrompt } from "./instruction"
 import { Plugin } from "../plugin"
 import PROMPT_PLAN from "../session/prompt/plan.txt"
+import PROMPT_AUTOPILOT from "../session/prompt/autopilot.txt"
 import BUILD_SWITCH from "../session/prompt/build-switch.txt"
 import MAX_STEPS from "../session/prompt/max-steps.txt"
 import { defer } from "../util/defer"
@@ -322,6 +323,8 @@ export namespace SessionPrompt {
     let structuredOutput: unknown | undefined
 
     let step = 0
+    let reflections = 0
+    const MAX_REFLECTIONS = 50
     const session = await Session.get(sessionID)
     while (true) {
       await SessionStatus.set(sessionID, { type: "busy" })
@@ -352,6 +355,31 @@ export namespace SessionPrompt {
         !["tool-calls", "unknown"].includes(lastAssistant.finish) &&
         lastUser.id < lastAssistant.id
       ) {
+        if (lastUser.agent === "autopilot") {
+          if (reflections >= MAX_REFLECTIONS) {
+            log.info("autopilot: max reflections reached, exiting", { sessionID, reflections })
+            break
+          }
+          reflections++
+          const reflect: MessageV2.User = {
+            id: MessageID.ascending(),
+            sessionID,
+            role: "user",
+            time: { created: Date.now() },
+            agent: "autopilot",
+            model: lastUser.model,
+          }
+          await Session.updateMessage(reflect)
+          await Session.updatePart({
+            id: PartID.ascending(),
+            messageID: reflect.id,
+            sessionID,
+            type: "text",
+            text: PROMPT_AUTOPILOT,
+            synthetic: true,
+          } satisfies MessageV2.TextPart)
+          continue
+        }
         log.info("exiting loop", { sessionID })
         break
       }
