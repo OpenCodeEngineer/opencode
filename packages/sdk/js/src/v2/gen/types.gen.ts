@@ -1121,6 +1121,14 @@ export type Config = {
    * Additional instruction files or patterns to include
    */
   instructions?: Array<string>
+  scheduler?: {
+    enabled?: boolean
+    heartbeat?: {
+      enabled?: boolean
+      interval?: string
+    }
+    maxConcurrent?: number
+  }
   layout?: LayoutConfig
   permission?: PermissionConfig
   /**
@@ -1207,10 +1215,6 @@ export type Config = {
      * Timeout in milliseconds for model context protocol (MCP) requests
      */
     mcp_timeout?: number
-    /**
-     * Timeout in milliseconds between stream chunks from LLM. If no data is received within this period, the request will be retried. Default is 60000 (60 seconds). Set to 0 to disable.
-     */
-    stream_idle_timeout?: number
   }
 }
 
@@ -5094,6 +5098,26 @@ export type VcsGetResponses = {
 }
 
 export type VcsGetResponse = VcsGetResponses[keyof VcsGetResponses]
+
+export type VcsDiffData = {
+  body?: never
+  path?: never
+  query: {
+    directory?: string
+    workspace?: string
+    mode: "git" | "branch"
+  }
+  url: "/vcs/diff"
+}
+
+export type VcsDiffResponses = {
+  /**
+   * VCS diff
+   */
+  200: Array<FileDiff>
+}
+
+export type VcsDiffResponse = VcsDiffResponses[keyof VcsDiffResponses]
 
 export type CommandListData = {
   body?: never
