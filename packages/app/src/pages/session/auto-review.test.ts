@@ -22,15 +22,18 @@ describe("reviewPrompt", () => {
 
   test("supports cross-review prompt kind", () => {
     const text = reviewPromptFor("openai/gpt-5", "cross-review")
-    expect(text).toContain("Codex, run cross-review")
+    expect(text).toContain("Run cross-review")
   })
 })
 
 describe("reviewPrompt parsing", () => {
-  test("matches prompt kind by prefix", () => {
+  test("matches prompt kind by new and old prefixes", () => {
     expect(reviewPromptCheck(reviewPrompt("openai/gpt-5"))).toBe(true)
     expect(reviewPromptKind(reviewPrompt("openai/gpt-5"))).toBe("supervisor")
     expect(reviewPromptKind(reviewPromptFor("openai/gpt-5", "cross-review"))).toBe("cross-review")
+    expect(reviewPromptKind("Run auto-review for openai/gpt-5 work.")).toBe("supervisor")
+    expect(reviewPromptKind("Codex, run supervisor review for openai/gpt-5 work.")).toBe("supervisor")
+    expect(reviewPromptKind("Codex, run cross-review for openai/gpt-5 work.")).toBe("cross-review")
     expect(reviewPromptKind("Codex, run auto-review for openai/gpt-5 work.")).toBe("supervisor")
     expect(reviewPromptCheck("hello")).toBe(false)
     expect(reviewPromptKind("hello")).toBeUndefined()

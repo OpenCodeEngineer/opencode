@@ -28,10 +28,10 @@ type PickOutput = {
 export type ReviewKind = "supervisor" | "cross-review"
 
 const heads: Record<ReviewKind, string> = {
-  supervisor: "Codex, run supervisor review",
-  "cross-review": "Codex, run cross-review",
+  supervisor: "Run supervisor review",
+  "cross-review": "Run cross-review",
 }
-const legacy = "Codex, run auto-review"
+const legacy = "Run auto-review"
 const done = "Task completed."
 
 const key = (item: Key) => `${item.providerID}/${item.modelID}`
@@ -81,6 +81,9 @@ export const reviewPromptKind = (text: string): ReviewKind | undefined => {
   if (line.startsWith(heads.supervisor.toLowerCase())) return "supervisor"
   if (line.startsWith(heads["cross-review"].toLowerCase())) return "cross-review"
   if (line.startsWith(legacy.toLowerCase())) return "supervisor"
+  if (line.startsWith("codex, run supervisor review")) return "supervisor"
+  if (line.startsWith("codex, run cross-review")) return "cross-review"
+  if (line.startsWith("codex, run auto-review")) return "supervisor"
 }
 
 export const reviewPromptCheck = (text: string) => !!reviewPromptKind(text)

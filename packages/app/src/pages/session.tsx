@@ -1665,7 +1665,7 @@ export default function Page() {
     const agent = input.assistant.agent ?? local.agent.current()?.name
     if (!review || !agent) return
 
-    const previous = `${input.assistant.providerID}/${input.assistant.modelID}`
+    const previous = `${input.worker.providerID}/${input.worker.modelID}`
     const text = input.phase === "supervisor" ? reviewPrompt(previous) : reviewPromptFor(previous, input.phase)
 
     setFollowup("items", sessionID, (items) => [

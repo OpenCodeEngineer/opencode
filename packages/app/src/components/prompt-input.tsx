@@ -1919,6 +1919,40 @@ export const PromptInput: Component<PromptInputProps> = (props) => {
                         </TooltipKeybind>
                       </div>
                     </Show>
+                    <div
+                      data-component="prompt-auto-review-control"
+                      style={providersShouldFadeIn() ? { animation: "fade-in 0.3s" } : undefined}
+                    >
+                      <Button
+                        data-action="prompt-auto-review"
+                        type="button"
+                        variant="ghost"
+                        size="normal"
+                        class="h-7 px-2 gap-1 text-13-regular text-text-base"
+                        classList={{
+                          "bg-surface-raised-base-active": settings.models.autoReview(),
+                        }}
+                        style={control()}
+                        onClick={() => {
+                          settings.models.setAutoReview(!settings.models.autoReview())
+                          restoreFocus()
+                        }}
+                        aria-pressed={settings.models.autoReview()}
+                      >
+                        <Icon
+                          name="checklist"
+                          size="small"
+                          classList={{
+                            "text-icon-success-base": settings.models.autoReview(),
+                            "text-icon-base": !settings.models.autoReview(),
+                          }}
+                        />
+                        <span>Review</span>
+                        <Show when={!settings.models.autoReview()}>
+                          <span class="text-11-regular text-text-weak">off</span>
+                        </Show>
+                      </Button>
+                    </div>
                   </Show>
                 </Show>
               </div>
