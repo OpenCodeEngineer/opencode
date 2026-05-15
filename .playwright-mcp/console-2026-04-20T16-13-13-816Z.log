@@ -1,0 +1,3 @@
+[      88ms] [ERROR] Executing inline script violates the following Content Security Policy directive 'script-src 'self' 'wasm-unsafe-eval''. Either the 'unsafe-inline' keyword, a hash ('sha256-QI23YWMJrD/tljM6/82tpL8EwqdBoptwZfycFHA9IiQ='), or a nonce ('nonce-...') is required to enable inline execution. The action has been blocked. @ http://100.108.64.76:4096/L2hvbWUvYXp1cmV1c2VyL3dvcmtzcGFjZS9vcGVuY29kZQ/session/ses_2545b96beffe14sPHFhfR7CnN9:15
+[    1361ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://100.108.64.76:4096/session/ses_2545b96beffe14sPHFhfR7CnN9/diff?directory=%2Fhome%2Fazureuser%2Fworkspace%2Fopencode:0
+[    1396ms] Object

@@ -1,0 +1,22 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - button "Toggle menu" [ref=e7]:
+        - img [ref=e9]
+    - generic [ref=e13]:
+      - navigation "Projects and sessions" [ref=e14]:
+        - generic [ref=e16]:
+          - generic [ref=e18]:
+            - button "Recent sessions" [ref=e20]:
+              - img [ref=e23]
+            - button "Open project" [ref=e26]:
+              - img [ref=e28]
+          - generic [ref=e30]:
+            - button "Settings" [ref=e32]:
+              - img [ref=e34]
+            - button "Help" [ref=e38]:
+              - img [ref=e40]
+      - main [ref=e45]
+  - generic:
+    - region "Notifications (alt+T)":
+      - list

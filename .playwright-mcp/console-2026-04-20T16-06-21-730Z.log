@@ -1,0 +1,26 @@
+[     120ms] [ERROR] Executing inline script violates the following Content Security Policy directive 'script-src 'self' 'wasm-unsafe-eval''. Either the 'unsafe-inline' keyword, a hash ('sha256-QI23YWMJrD/tljM6/82tpL8EwqdBoptwZfycFHA9IiQ='), or a nonce ('nonce-...') is required to enable inline execution. The action has been blocked. @ http://100.108.64.76:4096/L2hvbWUvYXp1cmV1c2VyL3dvcmtzcGFjZS9vcGVuY29kZQ/session/ses_2545b96beffe14sPHFhfR7CnN9:15
+[    1385ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://100.108.64.76:4096/session/ses_2545b96beffe14sPHFhfR7CnN9/diff?directory=%2Fhome%2Fazureuser%2Fworkspace%2Fopencode:0
+[    1511ms] Object
+[    1801ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://100.108.64.76:4096/session/ses_2545b96beffe14sPHFhfR7CnN9/diff?directory=%2Fhome%2Fazureuser%2Fworkspace%2Fopencode:0
+[    1804ms] Object
+[  184090ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://100.108.64.76:4096/vcs?directory=%2Fhome%2Fazureuser%2F.local%2Fshare%2Fopencode%2Fworktree%2F7ae66d7d86c76f89b687bdc9d670b0893bbb9e02%2Fopenclawbot-2026-04-11-02-48:0
+[  184118ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://100.108.64.76:4096/command?directory=%2Fhome%2Fazureuser%2F.local%2Fshare%2Fopencode%2Fworktree%2F7ae66d7d86c76f89b687bdc9d670b0893bbb9e02%2Fopenclawbot-2026-04-11-02-48:0
+[  184151ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://100.108.64.76:4096/permission?directory=%2Fhome%2Fazureuser%2F.local%2Fshare%2Fopencode%2Fworktree%2F7ae66d7d86c76f89b687bdc9d670b0893bbb9e02%2Fopenclawbot-2026-04-11-02-48:0
+[  184183ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://100.108.64.76:4096/path?directory=%2Fhome%2Fazureuser%2Fworkspace%2Fopencode:0
+[  184218ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://100.108.64.76:4096/session/status?directory=%2Fhome%2Fazureuser%2Fworkspace%2Fopencode:0
+[  184254ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://100.108.64.76:4096/command?directory=%2Fhome%2Fazureuser%2Fworkspace%2Fopencode:0
+[  184287ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://100.108.64.76:4096/permission?directory=%2Fhome%2Fazureuser%2Fworkspace%2Fopencode:0
+[  184319ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://100.108.64.76:4096/question?directory=%2Fhome%2Fazureuser%2Fworkspace%2Fopencode:0
+[  187087ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://100.108.64.76:4096/vcs?directory=%2Fhome%2Fazureuser%2Fworkspace%2Flamumu:0
+[  187122ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://100.108.64.76:4096/config?directory=%2Fhome%2Fazureuser%2Fworkspace%2FOpenClawBot:0
+[  187157ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://100.108.64.76:4096/command?directory=%2Fhome%2Fazureuser%2Fworkspace%2FOpenClawBot:0
+[  188675ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://100.108.64.76:4096/vcs?directory=%2Fhome%2Fazureuser%2F.local%2Fshare%2Fopencode%2Fworktree%2F16e34f5b15e53852682a61cc43ec139d61d5855e%2Fvibe-2026-04-16-18-10:0
+[  269244ms] [ERROR] Failed to load resource: net::ERR_INCOMPLETE_CHUNKED_ENCODING @ http://100.108.64.76:4096/global/event:0
+[  269247ms] [ERROR] [global-sdk] event stream error {url: http://100.108.64.76:4096, fetch: webview, error: TypeError: network error} @ http://100.108.64.76:4096/assets/index-7LFQVUWN.js:2390
+[  345231ms] [ERROR] [global-sdk] event stream error {url: http://100.108.64.76:4096, fetch: webview, error: TypeError: network error} @ http://100.108.64.76:4096/assets/index-7LFQVUWN.js:2390
+[  345241ms] [ERROR] Executing inline script violates the following Content Security Policy directive 'script-src 'self' 'wasm-unsafe-eval''. Either the 'unsafe-inline' keyword, a hash ('sha256-QI23YWMJrD/tljM6/82tpL8EwqdBoptwZfycFHA9IiQ='), or a nonce ('nonce-...') is required to enable inline execution. The action has been blocked. @ http://100.108.64.76:4096/L2hvbWUvYXp1cmV1c2VyL3dvcmtzcGFjZS9vcGVuY29kZQ/session/ses_2545b96beffe14sPHFhfR7CnN9:15
+[  346291ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://100.108.64.76:4096/session/ses_2545b96beffe14sPHFhfR7CnN9/diff?directory=%2Fhome%2Fazureuser%2Fworkspace%2Fopencode:0
+[  346292ms] Object
+[  372297ms] [ERROR] Executing inline script violates the following Content Security Policy directive 'script-src 'self' 'wasm-unsafe-eval''. Either the 'unsafe-inline' keyword, a hash ('sha256-QI23YWMJrD/tljM6/82tpL8EwqdBoptwZfycFHA9IiQ='), or a nonce ('nonce-...') is required to enable inline execution. The action has been blocked. @ http://100.108.64.76:4096/L2hvbWUvYXp1cmV1c2VyL3dvcmtzcGFjZS9vcGVuY29kZQ/session/ses_2545b96beffe14sPHFhfR7CnN9:15
+[  373298ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://100.108.64.76:4096/session/ses_2545b96beffe14sPHFhfR7CnN9/diff?directory=%2Fhome%2Fazureuser%2Fworkspace%2Fopencode:0
+[  373299ms] Object

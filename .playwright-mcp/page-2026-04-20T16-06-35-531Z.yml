@@ -1,0 +1,116 @@
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - button "Toggle menu" [expanded] [active] [ref=e7]:
+        - img [ref=e9]
+      - button "Search files" [ref=e49]:
+        - generic [ref=e51]: Search opencode
+        - generic [ref=e52]: ⌘K
+      - generic [ref=e57]:
+        - button "Status" [ref=e59]:
+          - img [ref=e63]
+        - button "Toggle terminal" [ref=e67]:
+          - img [ref=e69]
+        - generic [ref=e71]:
+          - button "Toggle review" [expanded] [ref=e73]:
+            - img [ref=e75]
+          - button "Toggle file tree" [ref=e79]:
+            - img [ref=e82]
+    - generic [ref=e13]:
+      - navigation "Projects and sessions" [ref=e14]:
+        - generic [ref=e16]:
+          - generic [ref=e18]:
+            - button "Recent sessions" [ref=e20]:
+              - img [ref=e23]
+            - button "Open project" [ref=e26]:
+              - img [ref=e28]
+          - generic [ref=e30]:
+            - button "Settings" [ref=e32]:
+              - img [ref=e34]
+            - button "Help" [ref=e38]:
+              - img [ref=e40]
+      - main [ref=e45]:
+        - generic [ref=e84]:
+          - generic [ref=e85]:
+            - generic [ref=e86]:
+              - generic [ref=e88]:
+                - button [ref=e89]:
+                  - img [ref=e91]
+                - region "scrollable content" [ref=e94]:
+                  - generic [ref=e95]:
+                    - generic [ref=e97]:
+                      - heading "mcp recent root 1776701171" [level=1] [ref=e100]
+                      - generic [ref=e101]:
+                        - button "View context usage" [ref=e103]:
+                          - img [ref=e105]
+                        - button "More options" [ref=e108]:
+                          - img [ref=e110]
+                    - log [ref=e117]
+              - generic [ref=e120]:
+                - generic [ref=e122]:
+                  - generic [ref=e123]:
+                    - textbox "Ask anything... \"Add logging throughout the codebase\"" [ref=e124]
+                    - generic: Ask anything... "Add logging throughout the codebase"
+                  - button "Send" [disabled] [ref=e126]:
+                    - img [ref=e128]
+                  - generic [ref=e130]:
+                    - button "Add files" [ref=e132]:
+                      - img [ref=e134]
+                    - button "Record voice input" [ref=e137]:
+                      - img [ref=e139]
+                    - button "Speak assistant replies" [ref=e142]:
+                      - img [ref=e144]
+                - generic [ref=e148]:
+                  - generic:
+                    - generic: Shell
+                  - generic [ref=e149]:
+                    - group [ref=e152]:
+                      - button "build" [ref=e153]:
+                        - generic [ref=e154]: build
+                        - img [ref=e157]
+                    - button "Gemini 3 Pro Preview" [ref=e161]:
+                      - img [ref=e162]
+                      - generic [ref=e164]: Gemini 3 Pro Preview
+                      - img [ref=e166]
+                    - group [ref=e170]:
+                      - button "Default" [ref=e171]:
+                        - generic [ref=e172]: Default
+                        - img [ref=e175]
+                    - button "Auto-accept permissions" [ref=e178]:
+                      - img [ref=e180]
+            - complementary "Review and files" [ref=e183]:
+              - generic [ref=e184]:
+                - generic [ref=e187]:
+                  - tablist [ref=e189]:
+                    - tab "Review" [selected] [ref=e191]:
+                      - generic [ref=e193]: Review
+                    - button "Open file" [ref=e196]:
+                      - img [ref=e198]
+                  - tabpanel "Review" [ref=e200]:
+                    - generic [ref=e203]:
+                      - group [ref=e206]:
+                        - button "Session changes" [ref=e207]:
+                          - generic [ref=e208]: Session changes
+                          - img [ref=e211]
+                      - region "scrollable content" [ref=e214]:
+                        - generic [ref=e217]: Snapshot tracking is disabled in config, so session changes are unavailable
+                - generic:
+                  - tablist:
+                    - generic:
+                      - tab [selected]: 0 Changes
+                    - generic:
+                      - tab: All files
+                  - tabpanel:
+                    - generic: Snapshot tracking is disabled in config, so session changes are unavailable
+          - generic:
+            - generic:
+              - generic:
+                - tablist:
+                  - generic:
+                    - generic:
+                      - button:
+                        - generic:
+                          - img
+  - generic:
+    - region "Notifications (alt+T)":
+      - list

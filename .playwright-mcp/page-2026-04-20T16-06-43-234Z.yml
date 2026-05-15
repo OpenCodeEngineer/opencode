@@ -1,0 +1,331 @@
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - button "Toggle menu" [expanded] [ref=e7]:
+        - img [ref=e9]
+      - button "Search files" [ref=e49]:
+        - generic [ref=e51]: Search opencode
+        - generic [ref=e52]: ⌘K
+      - generic [ref=e57]:
+        - button "Status" [ref=e59]:
+          - img [ref=e63]
+        - button "Toggle terminal" [ref=e67]:
+          - img [ref=e69]
+        - generic [ref=e71]:
+          - button "Toggle review" [expanded] [ref=e73]:
+            - img [ref=e75]
+          - button "Toggle file tree" [ref=e79]:
+            - img [ref=e82]
+    - generic [ref=e13]:
+      - navigation "Projects and sessions" [ref=e14]:
+        - generic [ref=e15]:
+          - generic [ref=e16]:
+            - generic [ref=e18]:
+              - button "Recent sessions" [active] [ref=e20]:
+                - img [ref=e23]
+              - button "Open project" [ref=e26]:
+                - img [ref=e28]
+            - generic [ref=e30]:
+              - button "Settings" [ref=e32]:
+                - img [ref=e34]
+              - button "Help" [ref=e38]:
+                - img [ref=e40]
+          - generic [ref=e219]:
+            - generic [ref=e222]:
+              - generic [ref=e223]: Recent sessions
+              - generic [ref=e224]: Across all projects
+            - textbox "Search..." [ref=e226]
+            - navigation [ref=e228]:
+              - generic [ref=e229]:
+                - generic [ref=e230]: Today
+                - generic [ref=e231]:
+                  - link "mcp recent second 1776701171 opencode" [ref=e233]:
+                    - /url: /L2hvbWUvYXp1cmV1c2VyL3dvcmtzcGFjZS9vcGVuY29kZQ/session/ses_2545b9616ffeecjaQr5aum6kQO
+                    - generic [ref=e234]:
+                      - img [ref=e237]
+                      - generic [ref=e239]:
+                        - generic [ref=e240]: mcp recent second 1776701171
+                        - generic [ref=e241]: opencode
+                  - button "Archive" [ref=e244]:
+                    - img [ref=e246]
+                - generic [ref=e248]:
+                  - link "mcp recent root 1776701171 opencode" [ref=e250]:
+                    - /url: /L2hvbWUvYXp1cmV1c2VyL3dvcmtzcGFjZS9vcGVuY29kZQ/session/ses_2545b96beffe14sPHFhfR7CnN9
+                    - generic [ref=e251]:
+                      - img [ref=e254]
+                      - generic [ref=e256]:
+                        - generic [ref=e257]: mcp recent root 1776701171
+                        - generic [ref=e258]: opencode
+                  - button "Archive" [ref=e261]:
+                    - img [ref=e263]
+                - generic [ref=e265]:
+                  - link "mcp recent child 1776701171 opencode" [ref=e267]:
+                    - /url: /L2hvbWUvYXp1cmV1c2VyL3dvcmtzcGFjZS9vcGVuY29kZQ/session/ses_2545b966affezyNFMPc6Q3H5dY
+                    - generic [ref=e268]:
+                      - img [ref=e271]
+                      - generic [ref=e273]:
+                        - generic [ref=e274]: mcp recent child 1776701171
+                        - generic [ref=e275]: opencode
+                  - button "Archive" [ref=e278]:
+                    - img [ref=e280]
+                - generic [ref=e282]:
+                  - link "Fix canary-ci KUBECONFIG and green CI OpenClawBot / openclawbot-2026-04-11-02-48" [ref=e284]:
+                    - /url: /L2hvbWUvYXp1cmV1c2VyLy5sb2NhbC9zaGFyZS9vcGVuY29kZS93b3JrdHJlZS83YWU2NmQ3ZDg2Yzc2Zjg5YjY4N2JkYzlkNjcwYjA4OTNiYmI5ZTAyL29wZW5jbGF3Ym90LTIwMjYtMDQtMTEtMDItNDg/session/ses_260406a87ffezDFyvAY2C2iToH
+                    - generic [ref=e285]:
+                      - img [ref=e287]
+                      - generic [ref=e304]:
+                        - generic [ref=e305]: Fix canary-ci KUBECONFIG and green CI
+                        - generic [ref=e306]: OpenClawBot / openclawbot-2026-04-11-02-48
+                  - button "Archive" [ref=e309]:
+                    - img [ref=e311]
+                - generic [ref=e313]:
+                  - link "Fix canary kubeconfig workflow OpenClawBot / openclawbot-2026-04-11-02-48" [ref=e315]:
+                    - /url: /L2hvbWUvYXp1cmV1c2VyLy5sb2NhbC9zaGFyZS9vcGVuY29kZS93b3JrdHJlZS83YWU2NmQ3ZDg2Yzc2Zjg5YjY4N2JkYzlkNjcwYjA4OTNiYmI5ZTAyL29wZW5jbGF3Ym90LTIwMjYtMDQtMTEtMDItNDg/session/ses_2545ef137ffeI22AHhNLda0CYj
+                    - generic [ref=e316]:
+                      - img [ref=e319]
+                      - generic [ref=e321]:
+                        - generic [ref=e322]: Fix canary kubeconfig workflow
+                        - generic [ref=e323]: OpenClawBot / openclawbot-2026-04-11-02-48
+                  - button "Archive" [ref=e326]:
+                    - img [ref=e328]
+                - generic [ref=e330]:
+                  - link "Read canary-ci workflow section (@explore subagent) OpenClawBot / openclawbot-2026-04-11-02-48" [ref=e332]:
+                    - /url: /L2hvbWUvYXp1cmV1c2VyLy5sb2NhbC9zaGFyZS9vcGVuY29kZS93b3JrdHJlZS83YWU2NmQ3ZDg2Yzc2Zjg5YjY4N2JkYzlkNjcwYjA4OTNiYmI5ZTAyL29wZW5jbGF3Ym90LTIwMjYtMDQtMTEtMDItNDg/session/ses_25460040affeUOMBbMyGAAn8Qj
+                    - generic [ref=e333]:
+                      - img [ref=e336]
+                      - generic [ref=e338]:
+                        - generic [ref=e339]: Read canary-ci workflow section (@explore subagent)
+                        - generic [ref=e340]: OpenClawBot / openclawbot-2026-04-11-02-48
+                  - button "Archive" [ref=e343]:
+                    - img [ref=e345]
+                - generic [ref=e347]:
+                  - link "Harden webapp E2E cleanup OpenClawBot / openclawbot-2026-04-11-02-48" [ref=e349]:
+                    - /url: /L2hvbWUvYXp1cmV1c2VyLy5sb2NhbC9zaGFyZS9vcGVuY29kZS93b3JrdHJlZS83YWU2NmQ3ZDg2Yzc2Zjg5YjY4N2JkYzlkNjcwYjA4OTNiYmI5ZTAyL29wZW5jbGF3Ym90LTIwMjYtMDQtMTEtMDItNDg/session/ses_256682711ffeu7j6a8kNlB3jsQ
+                    - generic [ref=e350]:
+                      - img [ref=e353]
+                      - generic [ref=e355]:
+                        - generic [ref=e356]: Harden webapp E2E cleanup
+                        - generic [ref=e357]: OpenClawBot / openclawbot-2026-04-11-02-48
+                  - button "Archive" [ref=e360]:
+                    - img [ref=e362]
+                - generic [ref=e364]:
+                  - link "Execute onboarding issue waves lamumu" [ref=e366]:
+                    - /url: /L2hvbWUvYXp1cmV1c2VyL3dvcmtzcGFjZS9sYW11bXU/session/ses_25968df05ffe20UQ9Tnmn62FCR
+                    - generic [ref=e367]:
+                      - img [ref=e370]
+                      - generic [ref=e372]:
+                        - generic [ref=e373]: Execute onboarding issue waves
+                        - generic [ref=e374]: lamumu
+                  - button "Archive" [ref=e377]:
+                    - img [ref=e379]
+                - generic [ref=e381]:
+                  - 'link "QA: Onboarding implementation review #17-20 lamumu" [ref=e383]':
+                    - /url: /L2hvbWUvYXp1cmV1c2VyL3dvcmtzcGFjZS9sYW11bXU/session/ses_25657fe9effecTdhLUJAYv6fJq
+                    - generic [ref=e384]:
+                      - img [ref=e387]
+                      - generic [ref=e389]:
+                        - generic [ref=e390]: "QA: Onboarding implementation review #17-20"
+                        - generic [ref=e391]: lamumu
+                  - button "Archive" [ref=e394]:
+                    - img [ref=e396]
+                - generic [ref=e398]:
+                  - link "Implement issue 19 dashboard (@FrontendDeveloper subagent) lamumu" [ref=e400]:
+                    - /url: /L2hvbWUvYXp1cmV1c2VyL3dvcmtzcGFjZS9sYW11bXU/session/ses_2565ea80cffec2e3wudDVuqs6L
+                    - generic [ref=e401]:
+                      - img [ref=e404]
+                      - generic [ref=e406]:
+                        - generic [ref=e407]: Implement issue 19 dashboard (@FrontendDeveloper subagent)
+                        - generic [ref=e408]: lamumu
+                  - button "Archive" [ref=e411]:
+                    - img [ref=e413]
+                - generic [ref=e415]:
+                  - 'link "#791 fix: update Azure OpenAI credentials and remove litellm/* model fallbacks OpenClawBot" [ref=e417]':
+                    - /url: /L2hvbWUvYXp1cmV1c2VyL3dvcmtzcGFjZS9PcGVuQ2xhd0JvdA/session/ses_25c417f22ffes43FkVX2kndmUH
+                    - generic [ref=e418]:
+                      - img [ref=e421]
+                      - generic [ref=e423]:
+                        - generic [ref=e424]: "#791 fix: update Azure OpenAI credentials and remove litellm/* model fallbacks"
+                        - generic [ref=e425]: OpenClawBot
+                  - button "Archive" [ref=e428]:
+                    - img [ref=e430]
+                - generic [ref=e432]:
+                  - link "Fix outstanding production issues vibe / vibe-2026-04-16-18-10" [ref=e434]:
+                    - /url: /L2hvbWUvYXp1cmV1c2VyLy5sb2NhbC9zaGFyZS9vcGVuY29kZS93b3JrdHJlZS8xNmUzNGY1YjE1ZTUzODUyNjgyYTYxY2M0M2VjMTM5ZDYxZDU4NTVlL3ZpYmUtMjAyNi0wNC0xNi0xOC0xMA/session/ses_2599cdee4ffe0lZkisRCcyBZyJ
+                    - generic [ref=e435]:
+                      - img [ref=e438]
+                      - generic [ref=e440]:
+                        - generic [ref=e441]: Fix outstanding production issues
+                        - generic [ref=e442]: vibe / vibe-2026-04-16-18-10
+                  - button "Archive" [ref=e445]:
+                    - img [ref=e447]
+                - generic [ref=e449]:
+                  - link "Fix test Stripe IDs vibe / vibe-2026-04-16-18-10" [ref=e451]:
+                    - /url: /L2hvbWUvYXp1cmV1c2VyLy5sb2NhbC9zaGFyZS9vcGVuY29kZS93b3JrdHJlZS8xNmUzNGY1YjE1ZTUzODUyNjgyYTYxY2M0M2VjMTM5ZDYxZDU4NTVlL3ZpYmUtMjAyNi0wNC0xNi0xOC0xMA/session/ses_256645188ffeC2DCGOYIkZnlUZ
+                    - generic [ref=e452]:
+                      - img [ref=e455]
+                      - generic [ref=e457]:
+                        - generic [ref=e458]: Fix test Stripe IDs
+                        - generic [ref=e459]: vibe / vibe-2026-04-16-18-10
+                  - button "Archive" [ref=e462]:
+                    - img [ref=e464]
+                - generic [ref=e466]:
+                  - link "Implement issue 1077 script vibe / vibe-2026-04-16-18-10" [ref=e468]:
+                    - /url: /L2hvbWUvYXp1cmV1c2VyLy5sb2NhbC9zaGFyZS9vcGVuY29kZS93b3JrdHJlZS8xNmUzNGY1YjE1ZTUzODUyNjgyYTYxY2M0M2VjMTM5ZDYxZDU4NTVlL3ZpYmUtMjAyNi0wNC0xNi0xOC0xMA/session/ses_254625655ffeA22GiPg5XmARpC
+                    - generic [ref=e469]:
+                      - img [ref=e472]
+                      - generic [ref=e474]:
+                        - generic [ref=e475]: Implement issue 1077 script
+                        - generic [ref=e476]: vibe / vibe-2026-04-16-18-10
+                  - button "Archive" [ref=e479]:
+                    - img [ref=e481]
+                - generic [ref=e483]:
+                  - link "Implement issue 1077 script vibe / vibe-2026-04-16-18-10" [ref=e485]:
+                    - /url: /L2hvbWUvYXp1cmV1c2VyLy5sb2NhbC9zaGFyZS9vcGVuY29kZS93b3JrdHJlZS8xNmUzNGY1YjE1ZTUzODUyNjgyYTYxY2M0M2VjMTM5ZDYxZDU4NTVlL3ZpYmUtMjAyNi0wNC0xNi0xOC0xMA/session/ses_25461d9d9ffeiiG6My4tbJTypn
+                    - generic [ref=e486]:
+                      - img [ref=e489]
+                      - generic [ref=e491]:
+                        - generic [ref=e492]: Implement issue 1077 script
+                        - generic [ref=e493]: vibe / vibe-2026-04-16-18-10
+                  - button "Archive" [ref=e496]:
+                    - img [ref=e498]
+                - generic [ref=e500]:
+                  - link "Fix admin spend key lookup vibe / vibe-2026-04-16-18-10" [ref=e502]:
+                    - /url: /L2hvbWUvYXp1cmV1c2VyLy5sb2NhbC9zaGFyZS9vcGVuY29kZS93b3JrdHJlZS8xNmUzNGY1YjE1ZTUzODUyNjgyYTYxY2M0M2VjMTM5ZDYxZDU4NTVlL3ZpYmUtMjAyNi0wNC0xNi0xOC0xMA/session/ses_25664aa57ffe3dTh0em4X7Cc82
+                    - generic [ref=e503]:
+                      - img [ref=e506]
+                      - generic [ref=e508]:
+                        - generic [ref=e509]: Fix admin spend key lookup
+                        - generic [ref=e510]: vibe / vibe-2026-04-16-18-10
+                  - button "Archive" [ref=e513]:
+                    - img [ref=e515]
+                - generic [ref=e517]:
+                  - link "Fix spend endpoint key lookup vibe / vibe-2026-04-16-18-10" [ref=e519]:
+                    - /url: /L2hvbWUvYXp1cmV1c2VyLy5sb2NhbC9zaGFyZS9vcGVuY29kZS93b3JrdHJlZS8xNmUzNGY1YjE1ZTUzODUyNjgyYTYxY2M0M2VjMTM5ZDYxZDU4NTVlL3ZpYmUtMjAyNi0wNC0xNi0xOC0xMA/session/ses_2546252caffeexGsmevJXc6NND
+                    - generic [ref=e520]:
+                      - img [ref=e523]
+                      - generic [ref=e525]:
+                        - generic [ref=e526]: Fix spend endpoint key lookup
+                        - generic [ref=e527]: vibe / vibe-2026-04-16-18-10
+                  - button "Archive" [ref=e530]:
+                    - img [ref=e532]
+                - generic [ref=e534]:
+                  - 'link "Fix #1078 persist DB pool params (@DevOpsEngineer subagent) vibe / vibe-2026-04-16-18-10" [ref=e536]':
+                    - /url: /L2hvbWUvYXp1cmV1c2VyLy5sb2NhbC9zaGFyZS9vcGVuY29kZS93b3JrdHJlZS8xNmUzNGY1YjE1ZTUzODUyNjgyYTYxY2M0M2VjMTM5ZDYxZDU4NTVlL3ZpYmUtMjAyNi0wNC0xNi0xOC0xMA/session/ses_256648dd0ffe729AuNndAvWaB8
+                    - generic [ref=e537]:
+                      - img [ref=e540]
+                      - generic [ref=e542]:
+                        - generic [ref=e543]: "Fix #1078 persist DB pool params (@DevOpsEngineer subagent)"
+                        - generic [ref=e544]: vibe / vibe-2026-04-16-18-10
+                  - button "Archive" [ref=e547]:
+                    - img [ref=e549]
+              - generic [ref=e551]:
+                - generic [ref=e552]: Yesterday
+                - generic [ref=e553]:
+                  - link "Backend MVP auth widgets lamumu" [ref=e555]:
+                    - /url: /L2hvbWUvYXp1cmV1c2VyL3dvcmtzcGFjZS9sYW11bXU/session/ses_2566e8c76ffe0LWyVx6WhjovqO
+                    - generic [ref=e556]:
+                      - img [ref=e559]
+                      - generic [ref=e561]:
+                        - generic [ref=e562]: Backend MVP auth widgets
+                        - generic [ref=e563]: lamumu
+                  - button "Archive" [ref=e566]:
+                    - img [ref=e568]
+                - generic [ref=e570]:
+                  - link "Analyze backend MVP gaps (@explore subagent) lamumu" [ref=e572]:
+                    - /url: /L2hvbWUvYXp1cmV1c2VyL3dvcmtzcGFjZS9sYW11bXU/session/ses_2566dffceffe7cgLdn0QOXwrhq
+                    - generic [ref=e573]:
+                      - img [ref=e576]
+                      - generic [ref=e578]:
+                        - generic [ref=e579]: Analyze backend MVP gaps (@explore subagent)
+                        - generic [ref=e580]: lamumu
+                  - button "Archive" [ref=e583]:
+                    - img [ref=e585]
+              - button "Load more" [ref=e588]
+      - main [ref=e45]:
+        - generic [ref=e84]:
+          - generic [ref=e85]:
+            - generic [ref=e86]:
+              - generic [ref=e88]:
+                - button [ref=e89]:
+                  - img [ref=e91]
+                - region "scrollable content" [ref=e94]:
+                  - generic [ref=e95]:
+                    - generic [ref=e97]:
+                      - heading "mcp recent root 1776701171" [level=1] [ref=e100]
+                      - generic [ref=e101]:
+                        - button "View context usage" [ref=e103]:
+                          - img [ref=e105]
+                        - button "More options" [ref=e108]:
+                          - img [ref=e110]
+                    - log [ref=e117]
+              - generic [ref=e120]:
+                - generic [ref=e122]:
+                  - generic [ref=e123]:
+                    - textbox "Ask anything... \"Add logging throughout the codebase\"" [ref=e124]
+                    - generic: Ask anything... "Add logging throughout the codebase"
+                  - button "Send" [disabled] [ref=e126]:
+                    - img [ref=e128]
+                  - generic [ref=e130]:
+                    - button "Add files" [ref=e132]:
+                      - img [ref=e134]
+                    - button "Record voice input" [ref=e137]:
+                      - img [ref=e139]
+                    - button "Speak assistant replies" [ref=e142]:
+                      - img [ref=e144]
+                - generic [ref=e148]:
+                  - generic:
+                    - generic: Shell
+                  - generic [ref=e149]:
+                    - group [ref=e152]:
+                      - button "build" [ref=e153]:
+                        - generic [ref=e154]: build
+                        - img [ref=e157]
+                    - button "Gemini 3 Pro Preview" [ref=e161]:
+                      - img [ref=e162]
+                      - generic [ref=e164]: Gemini 3 Pro Preview
+                      - img [ref=e166]
+                    - group [ref=e170]:
+                      - button "Default" [ref=e171]:
+                        - generic [ref=e172]: Default
+                        - img [ref=e175]
+                    - button "Auto-accept permissions" [ref=e178]:
+                      - img [ref=e180]
+            - complementary "Review and files" [ref=e183]:
+              - generic [ref=e184]:
+                - generic [ref=e187]:
+                  - tablist [ref=e189]:
+                    - tab "Review" [selected] [ref=e191]:
+                      - generic [ref=e193]: Review
+                    - button "Open file" [ref=e196]:
+                      - img [ref=e198]
+                  - tabpanel "Review" [ref=e200]:
+                    - generic [ref=e203]:
+                      - group [ref=e206]:
+                        - button "Session changes" [ref=e207]:
+                          - generic [ref=e208]: Session changes
+                          - img [ref=e211]
+                      - region "scrollable content" [ref=e214]:
+                        - generic [ref=e217]: Snapshot tracking is disabled in config, so session changes are unavailable
+                - generic:
+                  - tablist:
+                    - generic:
+                      - tab [selected]: 0 Changes
+                    - generic:
+                      - tab: All files
+                  - tabpanel:
+                    - generic: Snapshot tracking is disabled in config, so session changes are unavailable
+          - generic:
+            - generic:
+              - generic:
+                - tablist:
+                  - generic:
+                    - generic:
+                      - button:
+                        - generic:
+                          - img
+  - generic:
+    - region "Notifications (alt+T)":
+      - list
+  - generic:
+    - generic:
+      - tooltip "Recent sessions"

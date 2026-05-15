@@ -1,0 +1,30 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - button "Toggle menu" [expanded] [ref=e7]:
+        - img [ref=e9]
+    - generic [ref=e13]:
+      - navigation "Projects and sessions" [ref=e15]:
+        - generic [ref=e16]:
+          - generic [ref=e17]:
+            - generic [ref=e19]:
+              - button "Recent sessions" [ref=e21]:
+                - img [ref=e24]
+              - button "Open project" [ref=e27]:
+                - img [ref=e29]
+            - generic [ref=e31]:
+              - button "Settings" [ref=e33]:
+                - img [ref=e35]
+              - button "Help" [ref=e39]:
+                - img [ref=e41]
+          - generic [ref=e46]:
+            - generic [ref=e47]:
+              - generic [ref=e48]: No projects open
+              - generic [ref=e49]: Open a project to get started
+            - button "Open project" [ref=e50]:
+              - img [ref=e52]
+              - text: Open project
+      - main [ref=e55]
+  - generic:
+    - region "Notifications (alt+T)":
+      - list
